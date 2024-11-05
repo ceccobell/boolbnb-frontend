@@ -3,3 +3,7 @@
     padding: 0;
     box-sizing: border-box;
 }
+
+.bg-pink {
+    background-color: #ef6a9d !important;
+}

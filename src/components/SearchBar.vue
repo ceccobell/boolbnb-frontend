@@ -1,13 +1,20 @@
 <template>
-    <div>
-        <input
-            type="text"
-            v-model="query"
-            @input="searchAddress"
-            placeholder="Inserisci indirizzo..."
-            class="form-control" />
+    <div class="col-3 position-relative">
+        <div class="input-group">
+            <span class="input-group-text" id="basic-addon1"
+                ><i class="fa-solid fa-location-dot"></i
+            ></span>
+            <input
+                type="text"
+                class="form-control"
+                placeholder="Enter city"
+                @input="searchAddress"
+                v-model="query" />
+        </div>
         <ul v-if="results.length">
-            <li v-for="result in results" :key="result.id">{{ result.address.freeformAddress }}</li>
+            <li v-for="result in results" :key="result.id" @click="selectAddress(result)">
+                {{ result.address.freeformAddress }}
+            </li>
         </ul>
     </div>
 </template>
@@ -23,6 +30,10 @@ export default {
         }
     },
     methods: {
+        selectAddress(result) {
+            this.query = result.address.freeformAddress
+            this.results = []
+        },
         searchAddress() {
             // Esegui la ricerca solo se il campo non è vuoto
             if (this.query.length < 3) return
@@ -42,6 +53,7 @@ export default {
                 )
                 .then((response) => {
                     this.results = response.data.results
+                    console.log(this.results)
                 })
                 .catch((error) => {
                     console.error("Errore nella ricerca:", error)
@@ -52,21 +64,20 @@ export default {
 </script>
 
 <style scoped>
-/* Stili opzionali */
-.form-control {
-    width: 50%;
-    padding: 10px;
-    margin-top: 20px;
-}
-
 ul {
     list-style-type: none;
-    width: 50%;
     cursor: pointer;
+    background-color: white;
+    border-radius: 10px;
+    position: absolute;
 }
 
 li {
     padding: 5px;
     border-bottom: 1px solid #ccc;
+}
+
+li:hover {
+    background-color: rgb(221, 221, 221);
 }
 </style>
