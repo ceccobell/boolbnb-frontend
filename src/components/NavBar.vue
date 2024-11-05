@@ -1,5 +1,10 @@
 <script>
+import AuthForm from "./AuthForm.vue"
+
 export default {
+    components: {
+        AuthForm,
+    },
     data() {
         return {
             itemsNavbar: [
@@ -24,7 +29,13 @@ export default {
                     active: false,
                 },
             ],
+            isAuthFormVisible: false,
         }
+    },
+    methods: {
+        closeCanvas(value) {
+            this.isAuthFormVisible = value
+        },
     },
 }
 </script>
@@ -48,13 +59,19 @@ export default {
                             >
                         </li>
                         <li>
-                            <a href="#" class="btn btn-accedi"
+                            <a href="#" class="btn btn-accedi" @click="isAuthFormVisible = true"
                                 ><i class="fa-solid fa-user"></i> Accedi</a
                             >
                         </li>
                     </ul>
                 </div>
             </div>
+            <transition>
+                <div class="overlay" v-if="isAuthFormVisible"></div>
+            </transition>
+            <transition>
+                <AuthForm v-if="isAuthFormVisible" @close-canva="closeCanvas" />
+            </transition>
         </nav>
     </header>
 </template>
@@ -75,6 +92,11 @@ header nav {
 .btn-accedi {
     background-color: #ef6a9d;
     text-decoration: none;
+    color: white;
+}
+
+.btn-accedi:hover {
+    background-color: #d8598a;
     color: white;
 }
 </style>
