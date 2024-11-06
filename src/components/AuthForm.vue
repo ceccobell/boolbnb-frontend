@@ -38,8 +38,8 @@ export default {
                     this.closeCanvas()
                 })
                 .catch((error) => {
-                    if (error.response && error.response.data.errors) {
-                        this.errors = error.response.data.errors
+                    if (error.response) {
+                        this.errors = error.response.data
                     }
                     console.error("Login error:", error.response.data)
                 })
@@ -67,6 +67,7 @@ export default {
                         this.errors = error.response.data.errors
                     }
                     console.error("Registration error:", error.response.data)
+                    console.log("errori:", this.errors)
                 })
         },
     },
@@ -88,7 +89,10 @@ export default {
                 <div class="modal-body">
                     <div v-if="!registrationFormIsVisible">
                         <h2 class="text-center mb-4">Accedi</h2>
-                        <form class="space-y-4">
+                        <form @submit.prevent="submitLogin" class="space-y-4">
+                            <span v-if="this.errors.message" class="error-message mb-1 text-white">
+                                {{ this.errors.message }}
+                            </span>
                             <div class="mb-3 position-relative">
                                 <span
                                     class="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted">
@@ -113,17 +117,17 @@ export default {
                                     v-model="form.password"
                                     required />
                             </div>
-                            <button
-                                type="submit"
-                                class="btn bg-pink text-white w-100"
-                                @click="submitLogin">
+                            <button type="submit" class="btn bg-pink text-white w-100">
                                 Accedi
                             </button>
                         </form>
                     </div>
                     <div v-if="registrationFormIsVisible">
                         <h2 class="text-center mb-4">Registrati</h2>
-                        <form class="space-y-4">
+                        <form @submit.prevent="submitRegistration" class="space-y-4">
+                            <span v-if="this.errors.name" class="error-message">
+                                {{ this.errors.name[0] }}
+                            </span>
                             <div class="mb-3 position-relative">
                                 <span
                                     class="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted">
@@ -160,6 +164,12 @@ export default {
                                     v-model="form.email"
                                     required />
                             </div>
+                            <span v-if="this.errors.email" class="error-message">
+                                {{ this.errors.email[0] }}
+                            </span>
+                            <span v-if="this.errors.password" class="error-message">
+                                {{ this.errors.password[0] }}
+                            </span>
                             <div class="mb-3 position-relative">
                                 <span
                                     class="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted">
@@ -172,6 +182,9 @@ export default {
                                     v-model="form.password"
                                     required />
                             </div>
+                            <span v-if="this.errors.password_confirmation" class="error-message">
+                                {{ this.errors.password_confirmation[0] }}
+                            </span>
                             <div class="mb-3 position-relative">
                                 <span
                                     class="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted">
@@ -184,10 +197,7 @@ export default {
                                     v-model="form.password_confirmation"
                                     required />
                             </div>
-                            <button
-                                type="submit"
-                                class="btn bg-pink text-white w-100"
-                                @click="submitRegistration">
+                            <button type="submit" class="btn bg-pink text-white w-100">
                                 Registrati
                             </button>
                         </form>
@@ -226,5 +236,14 @@ export default {
 
 .position-relative .position-absolute {
     font-size: 1rem;
+}
+
+.error-message {
+    font-size: 12px;
+    display: block;
+    margin-top: 5px;
+    background-color: #e63b44;
+    padding: 10px;
+    border-radius: 5px;
 }
 </style>
