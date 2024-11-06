@@ -1,5 +1,6 @@
 <script>
 import axios from "axios"
+import { store } from "../../store"
 
 export default {
     data() {
@@ -7,11 +8,13 @@ export default {
             registrationFormIsVisible: false,
             form: {
                 name: "",
+                surname: "",
                 email: "",
                 password: "",
                 password_confirmation: "",
             },
             errors: {},
+            store,
         }
     },
     methods: {
@@ -22,17 +25,17 @@ export default {
             this.$emit("close-canva", false)
         },
         submitLogin() {
-            axios.defaults.withCredentials = true
+            console.log("Login data:", this.form)
             axios
-                .post(`https://boolflix-1c2e0e6c24b8.herokuapp.com/api/login`, {
+                .post(`http://127.0.0.1:8000/api/login`, {
                     email: this.form.email,
                     password: this.form.password,
                 })
                 .then((response) => {
+                    console.log("Login successful:", response.data)
                     localStorage.setItem("authToken", response.data.access_token)
                     store.isAuthenticated = true
                     this.closeCanvas()
-                    axios.defaults.withCredentials = false
                 })
                 .catch((error) => {
                     if (error.response && error.response.data.errors) {
@@ -42,10 +45,10 @@ export default {
                 })
         },
         submitRegistration() {
-            axios.defaults.withCredentials = true
             axios
-                .post(`https://boolflix-1c2e0e6c24b8.herokuapp.com/api/register`, {
+                .post(`http://127.0.0.1:8000/api/register`, {
                     name: this.form.name,
+                    surname: this.form.surname,
                     email: this.form.email,
                     password: this.form.password,
                     password_confirmation: this.form.password_confirmation,
@@ -53,8 +56,8 @@ export default {
                 .then((response) => {
                     console.log("Registration successful:", response.data)
                     localStorage.setItem("authToken", response.data.token)
-                    axios.defaults.withCredentials = false
                     this.form.name = ""
+                    this.form.surname = ""
                     this.form.email = ""
                     this.form.password = ""
                     this.form.password_confirmation = ""
@@ -95,6 +98,7 @@ export default {
                                     type="email"
                                     placeholder="Email"
                                     class="form-control ps-5"
+                                    v-model="form.email"
                                     required />
                             </div>
                             <div class="mb-3 position-relative">
@@ -106,9 +110,13 @@ export default {
                                     type="password"
                                     placeholder="Password"
                                     class="form-control ps-5"
+                                    v-model="form.password"
                                     required />
                             </div>
-                            <button type="submit" class="btn bg-pink text-white w-100">
+                            <button
+                                type="submit"
+                                class="btn bg-pink text-white w-100"
+                                @click="submitLogin">
                                 Accedi
                             </button>
                         </form>
@@ -125,6 +133,7 @@ export default {
                                     type="text"
                                     placeholder="Nome"
                                     class="form-control ps-5"
+                                    v-model="form.name"
                                     required />
                             </div>
                             <div class="mb-3 position-relative">
@@ -136,6 +145,7 @@ export default {
                                     type="text"
                                     placeholder="Cognome"
                                     class="form-control ps-5"
+                                    v-model="form.surname"
                                     required />
                             </div>
                             <div class="mb-3 position-relative">
@@ -147,6 +157,7 @@ export default {
                                     type="email"
                                     placeholder="Email"
                                     class="form-control ps-5"
+                                    v-model="form.email"
                                     required />
                             </div>
                             <div class="mb-3 position-relative">
@@ -158,6 +169,7 @@ export default {
                                     type="password"
                                     placeholder="Password"
                                     class="form-control ps-5"
+                                    v-model="form.password"
                                     required />
                             </div>
                             <div class="mb-3 position-relative">
@@ -169,9 +181,13 @@ export default {
                                     type="password"
                                     placeholder="Conferma Password"
                                     class="form-control ps-5"
+                                    v-model="form.password_confirmation"
                                     required />
                             </div>
-                            <button type="submit" class="btn bg-pink text-white w-100">
+                            <button
+                                type="submit"
+                                class="btn bg-pink text-white w-100"
+                                @click="submitRegistration">
                                 Registrati
                             </button>
                         </form>

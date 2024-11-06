@@ -1,5 +1,7 @@
 <script>
 import AuthForm from "./AuthForm.vue"
+import { store } from "../../store"
+import axios from "axios"
 
 export default {
     components: {
@@ -30,12 +32,38 @@ export default {
                 },
             ],
             isAuthFormVisible: false,
+            store,
         }
     },
     methods: {
         closeCanvas(value) {
             this.isAuthFormVisible = value
         },
+        logout() {
+            const token = localStorage.getItem("authToken")
+
+            axios
+                .post(
+                    `http://127.0.0.1:8000/api/logout`,
+                    {},
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                )
+                .then(() => {
+                    localStorage.removeItem("authToken")
+                    store.isAuthenticated = false
+                    this.$emit("close-modal", false)
+                })
+                .catch((error) => {
+                    console.error("Logout error:", error.response.data)
+                })
+        },
+    },
+    mounted() {
+        store.isAuthenticated = !!localStorage.getItem("authToken")
     },
 }
 </script>
@@ -45,7 +73,7 @@ export default {
         <nav class="navbar navbar-expand-lg bg-body-tertiary">
             <div class="container d-flex justify-content-between">
                 <a class="navbar-brand" href="#">
-                    <img src="/public/boolbnb_logo.png" alt="logo" class="logo" />
+                    <img src="/boolbnb_logo.png" alt="logo" class="logo" />
                 </a>
                 <div class="" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
@@ -59,8 +87,19 @@ export default {
                             >
                         </li>
                         <li>
-                            <a href="#" class="btn btn-accedi" @click="isAuthFormVisible = true"
+                            <a
+                                v-show="!store.isAuthenticated"
+                                href="#"
+                                class="btn btn-accedi"
+                                @click="isAuthFormVisible = true"
                                 ><i class="fa-solid fa-user"></i> Accedi</a
+                            >
+                            <a
+                                v-show="store.isAuthenticated"
+                                href="#"
+                                class="btn btn-accedi"
+                                @click="logout"
+                                ><i class="fa-solid fa-user"></i> Esci</a
                             >
                         </li>
                     </ul>
