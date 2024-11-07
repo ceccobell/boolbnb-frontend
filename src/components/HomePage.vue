@@ -67,7 +67,7 @@ export default {
                             class="form-check-input"
                             type="checkbox"
                             v-model="searchParams.wifi" />
-                        <label class="form-check-label">
+                        <label class="form-check-label custom-icon">
                             <i class="fa-solid fa-wifi me-1"></i> WiFi
                         </label>
                     </div>
@@ -77,7 +77,7 @@ export default {
                             type="checkbox"
                             v-model="searchParams.pool" />
                         <label class="form-check-label">
-                            <i class="fa-solid fa-person-swimming me-1"></i> Pool
+                            <i class="fa-solid fa-person-swimming me-1 custom-icon"></i> Pool
                         </label>
                     </div>
                 </div>
@@ -86,7 +86,7 @@ export default {
     </main>
 </template>
 
-<style scoped>
+<style lang="scss"scoped>
 main {
     height: calc(100vh - 75px);
     margin-top: 75px;
@@ -110,5 +110,13 @@ main {
     border-color: rgb(239, 106, 157);
     box-shadow: 0 0 0 0.25rem rgb(239 106 157 / 25%);
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%0, 0, 0, 1%29'/%3e%3c/svg%3e");
+}
+
+.custom-checkbox .form-check-input:checked + .custom-icon {
+    color: #EC622B;
+}
+
+.custom-checkbox .form-check-input:checked + .form-check-label .custom-icon {
+    color: #EC622B;
 }
 </style>
