@@ -1,29 +1,11 @@
 <script>
-import SearchBar from "./SearchBar.vue"
-import ApartmentSearch from "./ApartmentSearch.vue";
+import ApartmentSearch from "./ApartmentSearch.vue"
 
 export default {
     components: {
-        SearchBar,
-        ApartmentSearch
+        ApartmentSearch,
     },
-    data() {
-        return {
-            searchParams: {
-                city: "",
-                rooms: 1,
-                beds: 1,
-                wifi: false,
-                pool: false,
-            },
-        }
-    },
-    methods: {
-        search() {
-            // Aggiungi qui la logica per effettuare la ricerca con i parametri
-            console.log("Searching with:", this.searchParams)
-        },
-    },
+    methods: {},
 }
 </script>
 
@@ -32,7 +14,6 @@ export default {
         <div class="container">
             <div class="bg-white rounded-3 shadow p-4">
                 <div class="row g-3">
-                    <SearchBar />
                     <ApartmentSearch />
                 </div>
             </div>
