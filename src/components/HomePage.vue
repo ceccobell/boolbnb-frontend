@@ -62,7 +62,7 @@ export default {
                     </div>
                 </div>
                 <div class="mt-3 d-flex justify-content-start align-items-center gap-4">
-                    <div class="form-check form-switch">
+                    <div class="form-check form-switch custom-checkbox">
                         <input
                             class="form-check-input"
                             type="checkbox"
@@ -71,7 +71,7 @@ export default {
                             <i class="fa-solid fa-wifi me-1"></i> WiFi
                         </label>
                     </div>
-                    <div class="form-check form-switch">
+                    <div class="form-check form-switch custom-checkbox">
                         <input
                             class="form-check-input"
                             type="checkbox"
@@ -97,5 +97,18 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.custom-checkbox .form-check-input:checked {
+    background-color: rgb(239, 106, 157);
+    border-color: rgb(239, 106, 157);
+    box-shadow: 0 0 0 0.25rem rgb(239 106 157 / 25%);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%0, 0, 0, 1%29'/%3e%3c/svg%3e");
+}
+
+.custom-checkbox .form-check-input:focus{
+    border-color: rgb(239, 106, 157);
+    box-shadow: 0 0 0 0.25rem rgb(239 106 157 / 25%);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%0, 0, 0, 1%29'/%3e%3c/svg%3e");
 }
 </style>
