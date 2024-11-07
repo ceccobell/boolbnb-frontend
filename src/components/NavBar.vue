@@ -37,7 +37,7 @@ export default {
     },
     methods: {
         closeCanvas(value) {
-            this.isAuthFormVisible = value
+            this.isAuthFormVisible = false
         },
         logout() {
             const token = localStorage.getItem("authToken")
@@ -105,14 +105,16 @@ export default {
                     </ul>
                 </div>
             </div>
-            <transition>
-                <div class="overlay" v-if="isAuthFormVisible"></div>
-            </transition>
-            <transition>
-                <AuthForm v-if="isAuthFormVisible" @close-canva="closeCanvas" />
-            </transition>
         </nav>
     </header>
+    <teleport to='body'>
+        <transition>
+            <div class="overlay" v-if="isAuthFormVisible" @click="closeCanvas"></div>
+          </transition>
+          <transition>
+            <AuthForm v-if="isAuthFormVisible" @close-canva="closeCanvas" />
+          </transition>
+    </teleport>
 </template>
 
 <style scoped>
@@ -138,4 +140,14 @@ header nav {
     background-color: #d8598a;
     color: white;
 }
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9998;
+  }
 </style>
