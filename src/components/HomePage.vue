@@ -1,9 +1,11 @@
 <script>
 import SearchBar from "./SearchBar.vue"
+import ApartmentSearch from "./ApartmentSearch.vue";
 
 export default {
     components: {
         SearchBar,
+        ApartmentSearch
     },
     data() {
         return {
@@ -31,55 +33,7 @@ export default {
             <div class="bg-white rounded-3 shadow p-4">
                 <div class="row g-3">
                     <SearchBar />
-                    <div class="col-3">
-                        <div class="input-group">
-                            <span class="input-group-text bg-light">
-                                <i class="fa-solid fa-house"></i>
-                            </span>
-                            <select class="form-select" v-model="searchParams.rooms">
-                                <option v-for="num in [1, 2, 3, 4, 5]" :key="num" :value="num">
-                                    {{ num }} Rooms
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-3">
-                        <div class="input-group">
-                            <span class="input-group-text bg-light">
-                                <i class="fa-solid fa-bed"></i>
-                            </span>
-                            <select class="form-select" v-model="searchParams.beds">
-                                <option v-for="num in [1, 2, 3, 4, 5]" :key="num" :value="num">
-                                    {{ num }} Beds
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-3">
-                        <button class="btn bg-pink text-white w-100" @click="search">
-                            <i class="fa-solid fa-magnifying-glass"></i> Search
-                        </button>
-                    </div>
-                </div>
-                <div class="mt-3 d-flex justify-content-start align-items-center gap-4">
-                    <div class="form-check form-switch">
-                        <input
-                            class="form-check-input"
-                            type="checkbox"
-                            v-model="searchParams.wifi" />
-                        <label class="form-check-label">
-                            <i class="fa-solid fa-wifi me-1"></i> WiFi
-                        </label>
-                    </div>
-                    <div class="form-check form-switch">
-                        <input
-                            class="form-check-input"
-                            type="checkbox"
-                            v-model="searchParams.pool" />
-                        <label class="form-check-label">
-                            <i class="fa-solid fa-person-swimming me-1"></i> Pool
-                        </label>
-                    </div>
+                    <ApartmentSearch />
                 </div>
             </div>
         </div>
