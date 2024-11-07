@@ -1,5 +1,6 @@
 <script>
 import axios from "axios"
+import debounce from "lodash.debounce"
 
 export default {
     data() {
@@ -9,43 +10,48 @@ export default {
                 radius: 20,
                 min_rooms: 1,
                 min_beds: 1,
-                services: [],
+                services_filtered: [],
             },
             apartments: [],
             results: [],
+            services: [],
         }
     },
     methods: {
-        async search() {
-            try {
-                const response = await axios.get("http://127.0.0.1:8000/api/search-apartments", {
-                    params: this.searchParams,
-                })
-                this.apartments = response.data
-                console.log("Risultati ricerca:", this.apartments)
-            } catch (error) {
-                console.error("Errore nella ricerca degli appartamenti:", error)
+        searchApartments() {
+            if (this.searchParams.address.length) {
+                axios
+                    .get("http://127.0.0.1:8000/api/search-apartments", {
+                        params: this.searchParams,
+                    })
+                    .then((response) => {
+                        this.apartments = response.data
+                        console.log("Risultati ricerca:", this.apartments)
+                    })
+                    .catch((error) => {
+                        console.error("Errore nella ricerca degli appartamenti:", error)
+                    })
+            } else {
+                console.error("Inserisci un indirizzo")
             }
         },
         getServices() {
             axios
                 .get("http://127.0.0.1:8000/api/services")
                 .then((response) => {
-                    this.searchParams.services = response.data
+                    this.services = response.data
                 })
                 .catch((error) => {
                     console.error("error:", error.response.data)
                 })
         },
-        searchAddress() {
-            // Esegui la ricerca solo se il campo non è vuoto
-            if (this.searchParams.address.length < 3) return
+        searchAddress: debounce(function () {
+            if (this.searchParams.address.length < 3) return // Evita ricerche troppo brevi
 
-            // Fai la chiamata API a TomTom
             axios
                 .get(
                     "https://api.tomtom.com/search/2/search/" +
-                        encodeURIComponent(this.query) +
+                        encodeURIComponent(this.searchParams.address) +
                         ".json",
                     {
                         params: {
@@ -56,11 +62,24 @@ export default {
                 )
                 .then((response) => {
                     this.results = response.data.results
-                    console.log(this.results)
                 })
                 .catch((error) => {
                     console.error("Errore nella ricerca:", error)
                 })
+        }, 500), // Imposta il debounce a 500ms (mezzo secondo)
+        selectAddress(result) {
+            this.searchParams.address = result.address.freeformAddress
+            this.results = []
+        },
+        toggleService(service) {
+            const index = this.searchParams.services_filtered.indexOf(service.id)
+            if (index === -1) {
+                // Se il servizio non è già selezionato, aggiungilo
+                this.searchParams.services_filtered.push(service.id)
+            } else {
+                // Se il servizio è già selezionato, rimuovilo
+                this.searchParams.services_filtered.splice(index, 1)
+            }
         },
     },
     mounted() {
@@ -93,7 +112,7 @@ export default {
             <span class="input-group-text bg-light">
                 <i class="fa-solid fa-house"></i>
             </span>
-            <select class="form-select" v-model="searchParams.rooms">
+            <select class="form-select" v-model="searchParams.min_rooms">
                 <option v-for="num in [1, 2, 3, 4, 5]" :key="num" :value="num">
                     {{ num }} Rooms
                 </option>
@@ -105,7 +124,7 @@ export default {
             <span class="input-group-text bg-light">
                 <i class="fa-solid fa-bed"></i>
             </span>
-            <select class="form-select" v-model="searchParams.beds">
+            <select class="form-select" v-model="searchParams.min_beds">
                 <option v-for="num in [1, 2, 3, 4, 5]" :key="num" :value="num">
                     {{ num }} Beds
                 </option>
@@ -113,21 +132,22 @@ export default {
         </div>
     </div>
     <div class="col-3">
-        <button class="btn bg-pink text-white w-100" @click="search">
+        <button class="btn bg-pink text-white w-100" @click="searchApartments">
             <i class="fa-solid fa-magnifying-glass"></i> Search
         </button>
     </div>
-    <div class="mt-3 d-flex justify-content-start align-items-center gap-4">
-        <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" v-model="searchParams.wifi" />
-            <label class="form-check-label"> <i class="fa-solid fa-wifi me-1"></i> WiFi </label>
-        </div>
-        <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" v-model="searchParams.pool" />
+    <div class="mt-3 d-flex flex-wrap justify-content-start align-items-center gap-4">
+        <div class="col-1 form-check form-switch" v-for="(service, index) in services" :key="index">
+            <input
+                class="form-check-input"
+                type="checkbox"
+                :checked="searchParams.services_filtered.includes(service.id)"
+                @change="toggleService(service)" />
             <label class="form-check-label">
-                <i class="fa-solid fa-person-swimming me-1"></i> Pool
+                <i :class="`${service.service_icon} me-1`"></i> {{ service.service_name }}
             </label>
         </div>
+
         <div class="col-12 mt-4">
             <label for="radius" class="form-label"
                 >Raggio di ricerca: {{ searchParams.radius }} km</label
