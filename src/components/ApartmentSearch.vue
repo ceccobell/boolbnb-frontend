@@ -1,41 +1,93 @@
 <script>
-import axios from "axios";
-import SearchBar from "./SearchBar.vue";
+import axios from "axios"
 
 export default {
-    name: "ApartmentSearch",
-    components: {
-        SearchBar,
-    },
     data() {
         return {
             searchParams: {
-                city: "",
-                rooms: 1,
-                beds: 1,
-                wifi: false,
-                pool: false,
+                address: "",
+                radius: 20,
+                min_rooms: 1,
+                min_beds: 1,
+                services: [],
             },
             apartments: [],
-        };
+            results: [],
+        }
     },
     methods: {
         async search() {
             try {
-                const response = await axios.get("/search-apartments", {
+                const response = await axios.get("http://127.0.0.1:8000/api/search-apartments", {
                     params: this.searchParams,
-                });
-                this.apartments = response.data;
-                console.log("Risultati ricerca:", this.apartments);
+                })
+                this.apartments = response.data
+                console.log("Risultati ricerca:", this.apartments)
             } catch (error) {
-                console.error("Errore nella ricerca degli appartamenti:", error);
+                console.error("Errore nella ricerca degli appartamenti:", error)
             }
         },
+        getServices() {
+            axios
+                .get("http://127.0.0.1:8000/api/services")
+                .then((response) => {
+                    this.searchParams.services = response.data
+                })
+                .catch((error) => {
+                    console.error("error:", error.response.data)
+                })
+        },
+        searchAddress() {
+            // Esegui la ricerca solo se il campo non è vuoto
+            if (this.searchParams.address.length < 3) return
+
+            // Fai la chiamata API a TomTom
+            axios
+                .get(
+                    "https://api.tomtom.com/search/2/search/" +
+                        encodeURIComponent(this.query) +
+                        ".json",
+                    {
+                        params: {
+                            key: "Qwrc50MvZYOeJvH56v7hQrbf5HSzDfyX",
+                            limit: 5, // Limita i risultati a 5
+                        },
+                    }
+                )
+                .then((response) => {
+                    this.results = response.data.results
+                    console.log(this.results)
+                })
+                .catch((error) => {
+                    console.error("Errore nella ricerca:", error)
+                })
+        },
     },
-};
+    mounted() {
+        this.getServices()
+    },
+}
 </script>
 
 <template>
+    <div class="col-3 position-relative">
+        <div class="input-group">
+            <span class="input-group-text" id="basic-addon1"
+                ><i class="fa-solid fa-location-dot"></i
+            ></span>
+            <input
+                type="text"
+                class="form-control"
+                placeholder="Enter city"
+                @input="searchAddress"
+                v-model="searchParams.address" />
+        </div>
+        <ul v-if="results.length">
+            <li v-for="result in results" :key="result.id" @click="selectAddress(result)">
+                {{ result.address.freeformAddress }}
+            </li>
+        </ul>
+    </div>
     <div class="col-3">
         <div class="input-group">
             <span class="input-group-text bg-light">
@@ -68,9 +120,7 @@ export default {
     <div class="mt-3 d-flex justify-content-start align-items-center gap-4">
         <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" v-model="searchParams.wifi" />
-            <label class="form-check-label">
-                <i class="fa-solid fa-wifi me-1"></i> WiFi
-            </label>
+            <label class="form-check-label"> <i class="fa-solid fa-wifi me-1"></i> WiFi </label>
         </div>
         <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" v-model="searchParams.pool" />
@@ -79,16 +129,31 @@ export default {
             </label>
         </div>
         <div class="col-12 mt-4">
-            <label for="radius" class="form-label">Raggio di ricerca: {{ searchParams.radius }} km</label>
-            <input id="radius" type="range" class="form-range w-50" v-model="searchParams.radius" min="0" max="100"
+            <label for="radius" class="form-label"
+                >Raggio di ricerca: {{ searchParams.radius }} km</label
+            >
+            <input
+                id="radius"
+                type="range"
+                class="form-range w-50"
+                v-model="searchParams.radius"
+                min="0"
+                max="100"
                 step="1" />
         </div>
         <div v-if="apartments.length" class="mt-4">
             <h3>Risultati della ricerca:</h3>
             <div class="row">
-                <div class="col-12 col-sm-6 col-md-4 col-lg-3" v-for="apartment in apartments" :key="apartment.id">
+                <div
+                    class="col-12 col-sm-6 col-md-4 col-lg-3"
+                    v-for="apartment in apartments"
+                    :key="apartment.id">
                     <div class="card">
-                        <img v-if="apartment.image" :src="apartment.image" class="card-img-top" alt="Apartment Image" />
+                        <img
+                            v-if="apartment.image"
+                            :src="apartment.image"
+                            class="card-img-top"
+                            alt="Apartment Image" />
                         <div class="card-body">
                             <h5 class="card-title">{{ apartment.title }}</h5>
                             <p class="card-text">Location: {{ apartment.city }}</p>
@@ -105,3 +170,22 @@ export default {
         </div>
     </div>
 </template>
+
+<style scoped>
+ul {
+    list-style-type: none;
+    cursor: pointer;
+    background-color: white;
+    border-radius: 10px;
+    position: absolute;
+}
+
+li {
+    padding: 5px;
+    border-bottom: 1px solid #ccc;
+}
+
+li:hover {
+    background-color: rgb(221, 221, 221);
+}
+</style>
