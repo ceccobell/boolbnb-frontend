@@ -1,11 +1,22 @@
 <script>
 import ApartmentSearch from "./ApartmentSearch.vue"
+import Card from "./Card.vue"
 
 export default {
     components: {
         ApartmentSearch,
+        Card,
     },
-    methods: {},
+    data() {
+        return {
+            apartments: [],
+        }
+    },
+    methods: {
+        handleApartments(array) {
+            this.apartments = array
+        },
+    },
 }
 </script>
 
@@ -14,11 +25,18 @@ export default {
         <div class="container">
             <div class="bg-white rounded-3 shadow p-4">
                 <div class="row g-3">
-                    <ApartmentSearch />
+                    <ApartmentSearch @getApartments="handleApartments" />
                 </div>
             </div>
         </div>
     </main>
+    <div class="container">
+        <div class="row">
+            <div class="col-4" v-for="(apartment, index) in apartments" :key="index">
+                <Card :apartment="apartment" />
+            </div>
+        </div>
+    </div>
 </template>
 
 <style scoped>

@@ -26,6 +26,7 @@ export default {
                     })
                     .then((response) => {
                         this.apartments = response.data
+                        this.$emit("getApartments", this.apartments)
                         console.log("Risultati ricerca:", this.apartments)
                     })
                     .catch((error) => {
@@ -89,103 +90,81 @@ export default {
 </script>
 
 <template>
-    <div class="col-3 position-relative">
-        <div class="input-group">
-            <span class="input-group-text" id="basic-addon1"
-                ><i class="fa-solid fa-location-dot"></i
-            ></span>
-            <input
-                type="text"
-                class="form-control"
-                placeholder="Enter city"
-                @input="searchAddress"
-                v-model="searchParams.address" />
+    <div>
+        <div class="col-3 position-relative">
+            <div class="input-group">
+                <span class="input-group-text" id="basic-addon1"
+                    ><i class="fa-solid fa-location-dot"></i
+                ></span>
+                <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Enter city"
+                    @input="searchAddress"
+                    v-model="searchParams.address" />
+            </div>
+            <ul v-if="results.length">
+                <li v-for="result in results" :key="result.id" @click="selectAddress(result)">
+                    {{ result.address.freeformAddress }}
+                </li>
+            </ul>
         </div>
-        <ul v-if="results.length">
-            <li v-for="result in results" :key="result.id" @click="selectAddress(result)">
-                {{ result.address.freeformAddress }}
-            </li>
-        </ul>
-    </div>
-    <div class="col-3">
-        <div class="input-group">
-            <span class="input-group-text bg-light">
-                <i class="fa-solid fa-house"></i>
-            </span>
-            <select class="form-select" v-model="searchParams.min_rooms">
-                <option v-for="num in [1, 2, 3, 4, 5]" :key="num" :value="num">
-                    {{ num }} Rooms
-                </option>
-            </select>
+        <div class="col-3">
+            <div class="input-group">
+                <span class="input-group-text bg-light">
+                    <i class="fa-solid fa-house"></i>
+                </span>
+                <select class="form-select" v-model="searchParams.min_rooms">
+                    <option v-for="num in [1, 2, 3, 4, 5]" :key="num" :value="num">
+                        {{ num }} Rooms
+                    </option>
+                </select>
+            </div>
         </div>
-    </div>
-    <div class="col-3">
-        <div class="input-group">
-            <span class="input-group-text bg-light">
-                <i class="fa-solid fa-bed"></i>
-            </span>
-            <select class="form-select" v-model="searchParams.min_beds">
-                <option v-for="num in [1, 2, 3, 4, 5]" :key="num" :value="num">
-                    {{ num }} Beds
-                </option>
-            </select>
+        <div class="col-3">
+            <div class="input-group">
+                <span class="input-group-text bg-light">
+                    <i class="fa-solid fa-bed"></i>
+                </span>
+                <select class="form-select" v-model="searchParams.min_beds">
+                    <option v-for="num in [1, 2, 3, 4, 5]" :key="num" :value="num">
+                        {{ num }} Beds
+                    </option>
+                </select>
+            </div>
         </div>
-    </div>
-    <div class="col-3">
-        <button class="btn bg-pink text-white w-100" @click="searchApartments">
-            <i class="fa-solid fa-magnifying-glass"></i> Search
-        </button>
-    </div>
-    <div class="mt-3 d-flex flex-wrap justify-content-start align-items-center gap-4">
-        <div class="col-1 form-check form-switch" v-for="(service, index) in services" :key="index">
-            <input
-                class="form-check-input"
-                type="checkbox"
-                :checked="searchParams.services_filtered.includes(service.id)"
-                @change="toggleService(service)" />
-            <label class="form-check-label">
-                <i :class="`${service.service_icon} me-1`"></i> {{ service.service_name }}
-            </label>
+        <div class="col-3">
+            <button class="btn bg-pink text-white w-100" @click="searchApartments">
+                <i class="fa-solid fa-magnifying-glass"></i> Search
+            </button>
         </div>
+        <div class="mt-3 d-flex flex-wrap justify-content-start align-items-center gap-4">
+            <div
+                class="col-1 form-check form-switch"
+                v-for="(service, index) in services"
+                :key="index">
+                <input
+                    class="form-check-input"
+                    type="checkbox"
+                    :checked="searchParams.services_filtered.includes(service.id)"
+                    @change="toggleService(service)" />
+                <label class="form-check-label">
+                    <i :class="`${service.service_icon} me-1`"></i> {{ service.service_name }}
+                </label>
+            </div>
 
-        <div class="col-12 mt-4">
-            <label for="radius" class="form-label"
-                >Raggio di ricerca: {{ searchParams.radius }} km</label
-            >
-            <input
-                id="radius"
-                type="range"
-                class="form-range w-50"
-                v-model="searchParams.radius"
-                min="0"
-                max="100"
-                step="1" />
-        </div>
-        <div v-if="apartments.length" class="mt-4">
-            <h3>Risultati della ricerca:</h3>
-            <div class="row">
-                <div
-                    class="col-12 col-sm-6 col-md-4 col-lg-3"
-                    v-for="apartment in apartments"
-                    :key="apartment.id">
-                    <div class="card">
-                        <img
-                            v-if="apartment.image"
-                            :src="apartment.image"
-                            class="card-img-top"
-                            alt="Apartment Image" />
-                        <div class="card-body">
-                            <h5 class="card-title">{{ apartment.title }}</h5>
-                            <p class="card-text">Location: {{ apartment.city }}</p>
-                            <p class="card-text">Rooms: {{ apartment.rooms }}</p>
-                            <p class="card-text">Beds: {{ apartment.beds }}</p>
-                            <div class="d-flex justify-content-between">
-                                <button class="btn btn-primary">View Details</button>
-                                <button class="btn btn-secondary">Contact</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="col-12 mt-4">
+                <label for="radius" class="form-label"
+                    >Raggio di ricerca: {{ searchParams.radius }} km</label
+                >
+                <input
+                    id="radius"
+                    type="range"
+                    class="form-range w-50"
+                    v-model="searchParams.radius"
+                    min="0"
+                    max="100"
+                    step="1" />
             </div>
         </div>
     </div>
