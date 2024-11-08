@@ -9,12 +9,13 @@ export default {
     },
     data() {
         return {
-            apartments: [],
+            apartments_filtered: [],
         }
     },
     methods: {
-        handleApartments(array) {
-            this.apartments = array
+        handleApartments(apartments) {
+            console.log("Dati degli appartamenti:", apartments)
+            this.apartments_filtered = apartments
         },
     },
 }
@@ -22,11 +23,17 @@ export default {
 
 <template>
     <main>
-        <ApartmentSearch @getApartments="handleApartments" />
+        <div class="container">
+            <div class="bg-white rounded-3 shadow p-4">
+                <div class="row g-3">
+                    <ApartmentSearch @getApartments="handleApartments" />
+                </div>
+            </div>
+        </div>
     </main>
     <div class="container">
         <div class="row">
-            <div class="col-4" v-for="(apartment, index) in apartments" :key="index">
+            <div class="col-4" v-for="(apartment, index) in apartments_filtered" :key="index">
                 <Card :apartment="apartment" />
             </div>
         </div>

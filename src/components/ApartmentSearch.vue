@@ -27,7 +27,7 @@ export default {
                     .then((response) => {
                         this.apartments = response.data
                         this.$emit("getApartments", this.apartments)
-                        console.log("Risultati ricerca:", this.apartments)
+                        console.log("Risultati ricerca:", response.data)
                     })
                     .catch((error) => {
                         console.error("Errore nella ricerca degli appartamenti:", error)
@@ -145,7 +145,7 @@ export default {
                 </div>
                 <div class="mt-3 d-flex flex-wrap justify-content-start align-items-center gap-4">
                     <div
-                        class="col-1 form-check form-switch"
+                        class="col-1 form-check form-switch custom-checkbox"
                         v-for="(service, index) in services"
                         :key="index">
                         <input
@@ -154,7 +154,7 @@ export default {
                             :checked="searchParams.services_filtered.includes(service.id)"
                             @change="toggleService(service)" />
                         <label class="form-check-label">
-                            <i :class="`${service.service_icon} me-1`"></i>
+                            <i :class="`${service.service_icon} me-1 custom-icon`"></i>
                             {{ service.service_name }}
                         </label>
                     </div>
@@ -194,5 +194,31 @@ li {
 
 li:hover {
     background-color: rgb(221, 221, 221);
+}
+
+.custom-checkbox .form-check-input:checked {
+    background-color: rgb(239, 106, 157);
+    border-color: rgb(239, 106, 157);
+    box-shadow: 0 0 0 0.25rem rgb(239 106 157 / 25%);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%0, 0, 0, 1%29'/%3e%3c/svg%3e");
+}
+
+.custom-checkbox .form-check-input:focus {
+    border-color: rgb(239, 106, 157);
+    box-shadow: 0 0 0 0.25rem rgb(239 106 157 / 25%);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%0, 0, 0, 1%29'/%3e%3c/svg%3e");
+}
+
+.custom-checkbox .form-check-input:checked + .custom-icon {
+    color: #ec622b;
+}
+
+.custom-checkbox .form-check-input:checked + .form-check-label .custom-icon {
+    color: #ec622b;
+}
+
+.custom-input:focus {
+    border-color: rgb(239, 106, 157);
+    box-shadow: 0 0 0 0.25rem rgb(239 106 157 / 25%);
 }
 </style>

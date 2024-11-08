@@ -13,7 +13,11 @@ export default {
                 password: "",
                 password_confirmation: "",
             },
-            errors: {},
+            errors: {
+                login: {},
+                registration: {},
+                server: {},
+            },
             store,
         }
     },
@@ -24,8 +28,37 @@ export default {
         closeCanvas() {
             this.$emit("close-canva", false)
         },
+        validEmail(email) {
+            const re =
+                /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@(([^<>()[\]\.,;:\s@"]+\.)+[^<>()[\]\.,;:\s@"]{2,})$/i
+            return re.test(email)
+        },
         submitLogin() {
-            console.log("Login data:", this.form)
+            // Resetta gli errori precedenti
+            this.errors.login = {}
+            this.errors.server = {}
+
+            let hasError = false
+
+            // Validazione email
+            if (!this.form.email) {
+                this.errors.login.email = "L'email è obbligatoria."
+                hasError = true
+            } else if (!this.validEmail(this.form.email)) {
+                this.errors.login.email = "Inserisci un'email valida."
+                hasError = true
+            }
+
+            // Validazione password
+            if (!this.form.password) {
+                this.errors.login.password = "La password è obbligatoria."
+                hasError = true
+            }
+
+            if (hasError) {
+                return
+            }
+
             axios
                 .post(`http://127.0.0.1:8000/api/login`, {
                     email: this.form.email,
@@ -39,12 +72,58 @@ export default {
                 })
                 .catch((error) => {
                     if (error.response) {
-                        this.errors = error.response.data
+                        this.errors.server = error.response.data
                     }
                     console.error("Login error:", error.response.data)
                 })
         },
         submitRegistration() {
+            // Resetta gli errori precedenti
+            this.errors.registration = {}
+            this.errors.server = {}
+
+            let hasError = false
+
+            // Validazione nome
+            if (!this.form.name) {
+                this.errors.registration.name = "Il nome è obbligatorio."
+                hasError = true
+            }
+
+            // Validazione cognome
+            if (!this.form.surname) {
+                this.errors.registration.surname = "Il cognome è obbligatorio."
+                hasError = true
+            }
+
+            // Validazione email
+            if (!this.form.email) {
+                this.errors.registration.email = "L'email è obbligatoria."
+                hasError = true
+            } else if (!this.validEmail(this.form.email)) {
+                this.errors.registration.email = "Inserisci un'email valida."
+                hasError = true
+            }
+
+            // Validazione password
+            if (!this.form.password) {
+                this.errors.registration.password = "La password è obbligatoria."
+                hasError = true
+            } else if (this.form.password.length < 6) {
+                this.errors.registration.password = "La password deve avere almeno 6 caratteri."
+                hasError = true
+            }
+
+            // Validazione conferma password
+            if (this.form.password !== this.form.password_confirmation) {
+                this.errors.registration.password_confirmation = "Le password non corrispondono."
+                hasError = true
+            }
+
+            if (hasError) {
+                return
+            }
+
             axios
                 .post(`http://127.0.0.1:8000/api/register`, {
                     name: this.form.name,
@@ -56,18 +135,23 @@ export default {
                 .then((response) => {
                     console.log("Registration successful:", response.data)
                     localStorage.setItem("authToken", response.data.token)
+                    // Resetta i campi del form
                     this.form.name = ""
                     this.form.surname = ""
                     this.form.email = ""
                     this.form.password = ""
                     this.form.password_confirmation = ""
+                    this.registrationFormIsVisible = false
+                    this.closeCanvas()
                 })
                 .catch((error) => {
                     if (error.response && error.response.data.errors) {
-                        this.errors = error.response.data.errors
+                        this.errors.server = {
+                            ...this.errors.server,
+                            ...error.response.data.errors,
+                        }
                     }
                     console.error("Registration error:", error.response.data)
-                    console.log("errori:", this.errors)
                 })
         },
     },
@@ -78,7 +162,7 @@ export default {
     <!-- Auth Modal -->
     <div
         class="modal fade show d-flex align-items-center justify-content-center"
-        style="background: rgba(0, 0, 0, 0.5); z-index: 1050">
+        style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content p-4">
                 <button
@@ -87,129 +171,196 @@ export default {
                     aria-label="Close"
                     @click="closeCanvas()"></button>
                 <div class="modal-body">
+                    <!-- Login Form -->
                     <div v-if="!registrationFormIsVisible">
                         <h2 class="text-center mb-4">Accedi</h2>
-                        <form @submit.prevent="submitLogin" class="space-y-4">
-                            <span v-if="this.errors.message" class="error-message mb-1 text-white">
-                                {{ this.errors.message }}
-                            </span>
-                            <div class="mb-3 position-relative">
-                                <span
-                                    class="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted">
-                                    <i class="fa-solid fa-envelope"></i>
-                                </span>
+                        <form @submit.prevent="submitLogin">
+                            <!-- Errori del server -->
+                            <div v-if="errors.server.message" class="alert alert-danger">
+                                {{ errors.server.message }}
+                            </div>
+
+                            <!-- Campo Email -->
+
+                            <div class="form-floating mb-3">
                                 <input
                                     type="email"
-                                    placeholder="Email"
-                                    class="form-control ps-5"
+                                    class="form-control"
+                                    id="floatingEmailLogin"
                                     v-model="form.email"
                                     required />
+                                <label
+                                    for="floatingEmailLogin"
+                                    :class="{ 'text-danger': errors.login.email }"
+                                    ><i class="fa-solid fa-envelope me-2"></i
+                                    >{{ errors.login.email ? errors.login.email : "Email" }}</label
+                                >
                             </div>
-                            <div class="mb-3 position-relative">
-                                <span
-                                    class="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted">
-                                    <i class="fa-solid fa-lock"></i>
-                                </span>
+
+                            <!-- Campo Password -->
+
+                            <div class="form-floating mb-3">
                                 <input
                                     type="password"
-                                    placeholder="Password"
-                                    class="form-control ps-5"
+                                    class="form-control"
+                                    id="floatingPasswordLogin"
                                     v-model="form.password"
                                     required />
+                                <label
+                                    for="floatingPasswordLogin"
+                                    :class="{ 'text-danger': errors.login.password }"
+                                    ><i class="fa-solid fa-lock me-2"></i
+                                    >{{
+                                        errors.login.password ? errors.login.password : "Password"
+                                    }}</label
+                                >
                             </div>
+
                             <button type="submit" class="btn bg-pink text-white w-100">
                                 Accedi
                             </button>
                         </form>
                     </div>
-                    <div v-if="registrationFormIsVisible">
+
+                    <!-- Registration Form -->
+                    <div v-else>
                         <h2 class="text-center mb-4">Registrati</h2>
-                        <form @submit.prevent="submitRegistration" class="space-y-4">
-                            <span v-if="this.errors.name" class="error-message">
-                                {{ this.errors.name[0] }}
-                            </span>
-                            <div class="mb-3 position-relative">
-                                <span
-                                    class="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted">
-                                    <i class="fa-solid fa-person"></i>
-                                </span>
+                        <form @submit.prevent="submitRegistration">
+                            <!-- Errori del server -->
+                            <div v-if="errors.server.message" class="alert alert-danger">
+                                {{ errors.server.message }}
+                            </div>
+
+                            <!-- Campo Nome -->
+
+                            <div class="form-floating mb-3">
                                 <input
                                     type="text"
-                                    placeholder="Nome"
-                                    class="form-control ps-5"
+                                    class="form-control"
+                                    id="floatingNameValue"
                                     v-model="form.name"
                                     required />
+                                <label
+                                    for="floatingNameValue"
+                                    :class="{ 'text-danger': errors.registration.name }"
+                                    ><i class="fa-solid fa-user me-2"></i
+                                    >{{
+                                        errors.registration.name ? errors.registration.name : "Nome"
+                                    }}</label
+                                >
                             </div>
-                            <div class="mb-3 position-relative">
-                                <span
-                                    class="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted">
-                                    <i class="fa-solid fa-person"></i>
-                                </span>
+
+                            <!-- Campo Cognome -->
+
+                            <div class="form-floating mb-3">
                                 <input
                                     type="text"
-                                    placeholder="Cognome"
-                                    class="form-control ps-5"
+                                    class="form-control"
+                                    id="floatingSurnameValue"
                                     v-model="form.surname"
                                     required />
+                                <label
+                                    for="floatingSurnameValue"
+                                    :class="{ 'text-danger': errors.registration.surname }"
+                                    ><i class="fa-solid fa-user me-2"></i
+                                    >{{
+                                        errors.registration.surname
+                                            ? errors.registration.surname
+                                            : "Cognome"
+                                    }}</label
+                                >
                             </div>
-                            <div class="mb-3 position-relative">
-                                <span
-                                    class="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted">
-                                    <i class="fa-solid fa-envelope"></i>
-                                </span>
+
+                            <!-- Campo Email -->
+
+                            <div class="form-floating mb-3">
                                 <input
                                     type="email"
-                                    placeholder="Email"
-                                    class="form-control ps-5"
+                                    class="form-control"
+                                    id="floatingEmailValue"
                                     v-model="form.email"
                                     required />
+                                <label
+                                    for="floatingEmailValue"
+                                    :class="{ 'text-danger': errors.registration.email }"
+                                    ><i class="fa-solid fa-envelope me-2"></i
+                                    >{{
+                                        errors.registration.email
+                                            ? errors.registration.email
+                                            : "Email"
+                                    }}</label
+                                >
                             </div>
-                            <span v-if="this.errors.email" class="error-message">
-                                {{ this.errors.email[0] }}
-                            </span>
-                            <span v-if="this.errors.password" class="error-message">
-                                {{ this.errors.password[0] }}
-                            </span>
-                            <div class="mb-3 position-relative">
-                                <span
-                                    class="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted">
-                                    <i class="fa-solid fa-lock"></i>
-                                </span>
+
+                            <!-- Campo Password -->
+
+                            <div class="form-floating mb-3">
                                 <input
                                     type="password"
-                                    placeholder="Password"
-                                    class="form-control ps-5"
+                                    class="form-control"
+                                    id="floatingPasswordValue"
                                     v-model="form.password"
                                     required />
+                                <label
+                                    for="floatingPasswordValue"
+                                    :class="{ 'text-danger': errors.registration.password }"
+                                    ><i class="fa-solid fa-lock me-2"></i
+                                    >{{
+                                        errors.registration.password
+                                            ? errors.registration.password
+                                            : "Password"
+                                    }}</label
+                                >
                             </div>
-                            <span v-if="this.errors.password_confirmation" class="error-message">
-                                {{ this.errors.password_confirmation[0] }}
-                            </span>
-                            <div class="mb-3 position-relative">
-                                <span
-                                    class="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted">
-                                    <i class="fa-solid fa-lock"></i>
-                                </span>
+
+                            <!-- Campo Conferma Password -->
+
+                            <div class="form-floating mb-3">
                                 <input
                                     type="password"
-                                    placeholder="Conferma Password"
-                                    class="form-control ps-5"
+                                    class="form-control"
+                                    id="floatingPasswordCheckValue"
                                     v-model="form.password_confirmation"
                                     required />
+                                <label
+                                    for="floatingPasswordCheckValue"
+                                    :class="{
+                                        'text-danger': errors.registration.password_confirmation,
+                                    }"
+                                    ><i class="fa-solid fa-lock me-2"></i
+                                    >{{
+                                        errors.registration.password_confirmation
+                                            ? errors.registration.password_confirmation
+                                            : "Conferma Password"
+                                    }}</label
+                                >
                             </div>
+
                             <button type="submit" class="btn bg-pink text-white w-100">
                                 Registrati
                             </button>
                         </form>
                     </div>
+
                     <p class="text-center mt-3 text-muted">
-                        Don't have an account?
-                        <a
-                            href="#"
-                            class="text-primary text-decoration-underline"
-                            @click="showRegistrationForm"
-                            >Registrati</a
-                        >
+                        <template v-if="!registrationFormIsVisible">
+                            Non hai un account?
+                            <a
+                                href="#"
+                                class="text-primary text-decoration-underline"
+                                @click="showRegistrationForm"
+                                >Registrati</a
+                            >
+                        </template>
+                        <template v-else>
+                            Hai già un account?
+                            <a
+                                href="#"
+                                class="text-primary text-decoration-underline"
+                                @click="showRegistrationForm"
+                                >Accedi</a
+                            >
+                        </template>
                     </p>
                 </div>
             </div>
@@ -222,10 +373,7 @@ export default {
     border-radius: 0.75rem;
     position: relative;
     max-width: 700px;
-}
-
-.form-control {
-    padding-left: 2.5rem;
+    min-width: 400px;
 }
 
 .btn-close {
@@ -234,16 +382,59 @@ export default {
     font-size: 1.2rem;
 }
 
-.position-relative .position-absolute {
-    font-size: 1rem;
+.input-icon {
+    position: relative;
 }
 
-.error-message {
-    font-size: 12px;
-    display: block;
-    margin-top: 5px;
-    background-color: #e63b44;
-    padding: 10px;
-    border-radius: 5px;
+.input-icon .icon {
+    position: absolute;
+    top: 50%;
+    left: 0.75rem;
+    transform: translateY(-50%);
+    color: #6c757d;
+    pointer-events: none; /* Evita che l'icona interferisca con l'input */
+}
+
+.input-icon .form-control {
+    padding-left: 2.5rem;
+    box-sizing: border-box;
+}
+
+.input-icon .invalid-feedback {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    margin-top: 0.25rem;
+    min-height: 1.25rem; /* Riserva spazio per il messaggio di errore */
+}
+
+.mb-3 {
+    margin-bottom: 1rem !important;
+    position: relative;
+}
+
+.bg-pink {
+    background-color: #e83e8c;
+}
+
+.bg-pink:hover {
+    background-color: #dc3578;
+}
+
+.text-white {
+    color: white !important;
+}
+
+.text-muted {
+    color: #6c757d !important;
+}
+
+.text-primary {
+    color: #007bff !important;
+}
+
+.text-decoration-underline {
+    text-decoration: underline !important;
 }
 </style>

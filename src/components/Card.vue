@@ -1,6 +1,6 @@
 <template>
     <div class="card" style="width: 18rem">
-        <img :src="imageUrl" class="card-img-top" alt="Property Image" />
+        <!-- <img :src="imageUrl" class="card-img-top" alt="Property Image" /> -->
         <div class="card-body">
             <h5 class="card-title">{{ apartment.title }}</h5>
             <p class="card-text">{{ apartment.description }}</p>
