@@ -24,10 +24,8 @@ export default {
 <template>
     <main>
         <div class="container">
-            <div class="bg-white rounded-3 shadow p-4">
-                <div class="row g-3">
-                    <ApartmentSearch @getApartments="handleApartments" />
-                </div>
+            <div class="row g-3">
+                <ApartmentSearch @getApartments="handleApartments" />
             </div>
         </div>
     </main>
