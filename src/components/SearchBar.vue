@@ -6,7 +6,7 @@
             ></span>
             <input
                 type="text"
-                class="form-control"
+                class="form-control custom-address-search"
                 placeholder="Enter city"
                 @input="searchAddress"
                 v-model="query" />
@@ -79,5 +79,10 @@ li {
 
 li:hover {
     background-color: rgb(221, 221, 221);
+}
+
+.custom-address-search:focus {
+    border-color: rgb(239, 106, 157);
+    box-shadow: 0 0 0 0.25rem rgb(239 106 157 / 25%);
 }
 </style>

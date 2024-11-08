@@ -36,7 +36,7 @@ export default {
                             <span class="input-group-text bg-light">
                                 <i class="fa-solid fa-house"></i>
                             </span>
-                            <select class="form-select" v-model="searchParams.rooms">
+                            <select class="form-select custom-input" v-model="searchParams.rooms" data-style="btn-primary">
                                 <option v-for="num in [1, 2, 3, 4, 5]" :key="num" :value="num">
                                     {{ num }} Rooms
                                 </option>
@@ -48,7 +48,7 @@ export default {
                             <span class="input-group-text bg-light">
                                 <i class="fa-solid fa-bed"></i>
                             </span>
-                            <select class="form-select" v-model="searchParams.beds">
+                            <select class="form-select custom-input" v-model="searchParams.beds">
                                 <option v-for="num in [1, 2, 3, 4, 5]" :key="num" :value="num">
                                     {{ num }} Beds
                                 </option>
@@ -119,4 +119,10 @@ main {
 .custom-checkbox .form-check-input:checked + .form-check-label .custom-icon {
     color: #EC622B;
 }
+
+.custom-input:focus {
+    border-color: rgb(239, 106, 157);
+    box-shadow: 0 0 0 0.25rem rgb(239 106 157 / 25%);
+}
+  
 </style>
