@@ -155,24 +155,24 @@ export default {
                             Filtri avanzati
                         </button>
                     </div>
-                    <div class="col-6 mt-4">
-                        <div class="mb-3 w-100">
-                            <label for="radius" class="form-label d-block">
-                                <i class="fa-solid fa-route me-2"></i>
-                                Raggio di ricerca: <span class="radius-value">{{ searchParams.radius }}</span> km
-                            </label>
-                            <input
-                                type="range"
-                                class="form-range w-100"
-                                id="radius"
-                                v-model="searchParams.radius"
-                                min="0"
-                                max="100"
-                                step="1"
-                            />
-                        </div>
-                    </div>
                     <div class="collapse" id="collapseServices">
+                        <div class="col-6 offset-3 mt-4 mb-4">
+                            <div class="mb-3 w-100">
+                                <label for="radius" class="form-label d-block">
+                                    <i class="fa-solid fa-route me-2"></i>
+                                    Raggio di ricerca: <span class="radius-value">{{ searchParams.radius }}</span> km
+                                </label>
+                                <input
+                                    type="range"
+                                    class="form-range w-100"
+                                    id="radius"
+                                    v-model="searchParams.radius"
+                                    min="0"
+                                    max="100"
+                                    step="1"
+                                />
+                            </div>
+                        </div>
                       <div class="mt-2 d-flex flex-wrap justify-content-start align-items-center gap-4">
                           <div
                               class="col-2 form-check form-switch custom-checkbox"
@@ -237,8 +237,8 @@ li:hover {
 }
 
 .custom-select:focus {
-    border-color: rgb(239, 106, 157);
-    box-shadow: 0 0 0 0.25rem rgb(239 106 157 / 25%);
+    border-color: #ef6a9d;
+    box-shadow: 0 0 0 0.25rem #ef6a9d40;
 }
 
 .custom-range {

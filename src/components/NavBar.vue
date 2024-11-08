@@ -1,11 +1,11 @@
 <script>
-import AuthForm from "./AuthForm.vue"
+import AuthForm2 from "./AuthForm2.vue"
 import { store } from "../../store"
 import axios from "axios"
 
 export default {
     components: {
-        AuthForm,
+        AuthForm2,
     },
     data() {
         return {
@@ -112,7 +112,7 @@ export default {
             <div class="overlay" v-if="isAuthFormVisible" @click="closeCanvas"></div>
           </transition>
           <transition>
-            <AuthForm v-if="isAuthFormVisible" @close-canva="closeCanvas" />
+            <AuthForm2 v-if="isAuthFormVisible" @close-canva="closeCanvas" />
           </transition>
     </teleport>
 </template>
