@@ -1,7 +1,6 @@
 <script>
 import axios from "axios"
 import debounce from "lodash.debounce"
-import { computed } from "vue"
 
 export default {
     data() {
@@ -16,11 +15,6 @@ export default {
             apartments: [],
             results: [],
             services: [],
-        }
-    },
-    computed: {
-        sortedServices() {
-            return this.services.slice().sort((a, b) => a.service_name.localeCompare(b.service_name));
         }
     },
     methods: {
@@ -145,25 +139,35 @@ export default {
                     </div>
                 </div>
                 <div class="col-3">
-                    <button class="btn btn-search-custom w-100" @click="searchApartments">
+                    <button class="btn bg-pink text-white w-100" @click="searchApartments">
                         <i class="fa-solid fa-magnifying-glass"></i> Search
                     </button>
                 </div>
-                <div class="mt-4 d-flex flex-wrap justify-content-between align-items-center gap-4">
-                    <div class="col-3 mt-4">
-                        <button class="btn btn-collapse-custom" type="button" data-bs-toggle="collapse" data-bs-target="#collapseServices" aria-expanded="false" aria-controls="collapseServices">
-                            Filtri avanzati
-                        </button>
+                <div class="mt-4 d-flex flex-wrap justify-content-start align-items-center gap-4">
+                    <div
+                        class="col-2 form-check form-switch custom-checkbox"
+                        v-for="(service, index) in services"
+                        :key="index">
+                        <input
+                            class="form-check-input"
+                            type="checkbox"
+                            :checked="searchParams.services_filtered.includes(service.id)"
+                            @change="toggleService(service)" />
+                        <label class="form-check-label">
+                            <i :class="`${service.service_icon} me-1 ms-1 custom-icon`"></i>
+                            {{ service.service_name }}
+                        </label>
                     </div>
-                    <div class="col-6 mt-4">
-                        <div class="mb-3 w-100">
+
+                    <div class="col-12 mt-4">
+                        <div class="mb-3">
                             <label for="radius" class="form-label d-block">
                                 <i class="fa-solid fa-route me-2"></i>
                                 Raggio di ricerca: <span class="radius-value">{{ searchParams.radius }}</span> km
                             </label>
                             <input
                                 type="range"
-                                class="form-range w-100"
+                                class="form-range w-50"
                                 id="radius"
                                 v-model="searchParams.radius"
                                 min="0"
@@ -171,24 +175,6 @@ export default {
                                 step="1"
                             />
                         </div>
-                    </div>
-                    <div class="collapse" id="collapseServices">
-                      <div class="mt-2 d-flex flex-wrap justify-content-start align-items-center gap-4">
-                          <div
-                              class="col-2 form-check form-switch custom-checkbox"
-                              v-for="(service, index) in sortedServices"
-                              :key="index">
-                              <input
-                                  class="form-check-input"
-                                  type="checkbox"
-                                  :checked="searchParams.services_filtered.includes(service.id)"
-                                  @change="toggleService(service)" />
-                              <label class="form-check-label">
-                                  <i :class="`${service.service_icon} me-1 ms-1 custom-icon`"></i>
-                                  {{ service.service_name }}
-                              </label>
-                          </div>
-                      </div>
                     </div>
                 </div>
             </div>
@@ -248,34 +234,5 @@ li:hover {
 .radius-value {
     font-weight: bold;
     color: #ec622b;
-}
-
-.btn-collapse-custom {
-    background-color: rgb(239, 106, 157);
-    color: white;
-}
-
-.btn-collapse-custom:hover {
-    background-color: rgb(239 106 157 / 50%);
-    color: black;
-}
-
-.btn-search-custom {
-    background-color: rgb(239, 106, 157);
-    color: white;
-}
-
-.btn-search-custom:hover {
-    background-color: #d8598a;
-    color: white;
-}
-
-.btn-collapse-custom[aria-expanded="true"] {
-    background-color: #ec622b;
-    color: black;
-    &:hover {
-        background-color: #cf5626;
-        color: white;
-    }
 }
 </style>
