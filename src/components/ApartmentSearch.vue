@@ -100,7 +100,7 @@ export default {
                         ></span>
                         <input
                             type="text"
-                            class="form-control"
+                            class="form-control custom-select"
                             placeholder="Enter city"
                             @input="searchAddress"
                             v-model="searchParams.address" />
@@ -119,7 +119,7 @@ export default {
                         <span class="input-group-text bg-light">
                             <i class="fa-solid fa-house"></i>
                         </span>
-                        <select class="form-select" v-model="searchParams.min_rooms">
+                        <select class="form-select custom-select" v-model="searchParams.min_rooms">
                             <option v-for="num in [1, 2, 3, 4, 5]" :key="num" :value="num">
                                 {{ num }} Rooms
                             </option>
@@ -131,7 +131,7 @@ export default {
                         <span class="input-group-text bg-light">
                             <i class="fa-solid fa-bed"></i>
                         </span>
-                        <select class="form-select" v-model="searchParams.min_beds">
+                        <select class="form-select custom-select" v-model="searchParams.min_beds">
                             <option v-for="num in [1, 2, 3, 4, 5]" :key="num" :value="num">
                                 {{ num }} Beds
                             </option>
@@ -143,9 +143,9 @@ export default {
                         <i class="fa-solid fa-magnifying-glass"></i> Search
                     </button>
                 </div>
-                <div class="mt-3 d-flex flex-wrap justify-content-start align-items-center gap-4">
+                <div class="mt-4 d-flex flex-wrap justify-content-start align-items-center gap-4">
                     <div
-                        class="col-1 form-check form-switch custom-checkbox"
+                        class="col-2 form-check form-switch custom-checkbox"
                         v-for="(service, index) in services"
                         :key="index">
                         <input
@@ -154,23 +154,27 @@ export default {
                             :checked="searchParams.services_filtered.includes(service.id)"
                             @change="toggleService(service)" />
                         <label class="form-check-label">
-                            <i :class="`${service.service_icon} me-1 custom-icon`"></i>
+                            <i :class="`${service.service_icon} me-1 ms-1 custom-icon`"></i>
                             {{ service.service_name }}
                         </label>
                     </div>
 
                     <div class="col-12 mt-4">
-                        <label for="radius" class="form-label"
-                            >Raggio di ricerca: {{ searchParams.radius }} km</label
-                        >
-                        <input
-                            id="radius"
-                            type="range"
-                            class="form-range w-50"
-                            v-model="searchParams.radius"
-                            min="0"
-                            max="100"
-                            step="1" />
+                        <div class="mb-3">
+                            <label for="radius" class="form-label d-block">
+                                <i class="fa-solid fa-route me-2"></i>
+                                Raggio di ricerca: <span class="radius-value">{{ searchParams.radius }}</span> km
+                            </label>
+                            <input
+                                type="range"
+                                class="form-range w-50"
+                                id="radius"
+                                v-model="searchParams.radius"
+                                min="0"
+                                max="100"
+                                step="1"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -209,16 +213,26 @@ li:hover {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%0, 0, 0, 1%29'/%3e%3c/svg%3e");
 }
 
-.custom-checkbox .form-check-input:checked + .custom-icon {
-    color: #ec622b;
-}
-
-.custom-checkbox .form-check-input:checked + .form-check-label .custom-icon {
+.custom-checkbox .form-check-input:checked + .form-check-label {
     color: #ec622b;
 }
 
 .custom-input:focus {
     border-color: rgb(239, 106, 157);
     box-shadow: 0 0 0 0.25rem rgb(239 106 157 / 25%);
+}
+
+.custom-select:focus {
+    border-color: rgb(239, 106, 157);
+    box-shadow: 0 0 0 0.25rem rgb(239 106 157 / 25%);
+}
+
+.custom-range {
+    accent-color: rgb(239, 106, 157);
+}
+
+.radius-value {
+    font-weight: bold;
+    color: #ec622b;
 }
 </style>
