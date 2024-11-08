@@ -131,6 +131,7 @@ header nav {
     height: 75px;
     position: fixed;
     top: 0;
+    z-index: 1;
 }
 
 .logo {

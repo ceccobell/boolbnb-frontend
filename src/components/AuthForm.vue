@@ -65,8 +65,8 @@ export default {
                     password: this.form.password,
                 })
                 .then((response) => {
-                    console.log("Login successful:", response.data)
-                    localStorage.setItem("authToken", response.data.access_token)
+                    console.log("Login successful:", response.data.message)
+                    localStorage.setItem("authToken", response.data.token)
                     store.isAuthenticated = true
                     this.closeCanvas()
                 })
