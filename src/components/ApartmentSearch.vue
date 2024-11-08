@@ -121,7 +121,7 @@ export default {
                         </span>
                         <select class="form-select custom-select" v-model="searchParams.min_rooms">
                             <option v-for="num in [1, 2, 3, 4, 5]" :key="num" :value="num">
-                                {{ num }} Rooms
+                                {{ num }} Camere
                             </option>
                         </select>
                     </div>
@@ -133,7 +133,7 @@ export default {
                         </span>
                         <select class="form-select custom-select" v-model="searchParams.min_beds">
                             <option v-for="num in [1, 2, 3, 4, 5]" :key="num" :value="num">
-                                {{ num }} Beds
+                                {{ num }} Letti
                             </option>
                         </select>
                     </div>
