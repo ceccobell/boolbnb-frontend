@@ -12,22 +12,12 @@ export default {
             itemsNavbar: [
                 {
                     nome: "Home",
-                    url: "#",
+                    url: "/",
                     active: true,
                 },
                 {
-                    nome: "Come lavoriamo",
-                    url: "#",
-                    active: false,
-                },
-                {
-                    nome: "Proprietari",
-                    url: "#",
-                    active: false,
-                },
-                {
-                    nome: "Contatti",
-                    url: "#",
+                    nome: "Miei Appartamenti",
+                    url: "/myapartments",
                     active: false,
                 },
             ],
@@ -38,6 +28,17 @@ export default {
     methods: {
         closeCanvas(value) {
             this.isAuthFormVisible = false
+        },
+        selectItem(selectedItem) {
+            this.itemsNavbar.forEach((item) => {
+                item.active = item === selectedItem
+            })
+        },
+        setSelectedNavbarItem() {
+            const currentPath = this.$route.path
+            this.itemsNavbar.forEach((item) => {
+                item.active = item.url === currentPath
+            })
         },
         logout() {
             const token = localStorage.getItem("authToken")
@@ -62,8 +63,14 @@ export default {
                 })
         },
     },
+    watch: {
+        $route() {
+            this.setSelectedNavbarItem()
+        },
+    },
     mounted() {
         store.isAuthenticated = !!localStorage.getItem("authToken")
+        this.setSelectedNavbarItem()
     },
 }
 </script>
@@ -83,6 +90,7 @@ export default {
                                 :class="item.active ? 'active' : ''"
                                 aria-current="page"
                                 :href="item.url"
+                                @click="selectItem(item)"
                                 >{{ item.nome }}</a
                             >
                         </li>
@@ -107,13 +115,13 @@ export default {
             </div>
         </nav>
     </header>
-    <teleport to='body'>
+    <teleport to="body">
         <transition>
             <div class="overlay" v-if="isAuthFormVisible" @click="closeCanvas"></div>
-          </transition>
-          <transition>
+        </transition>
+        <transition>
             <AuthForm v-if="isAuthFormVisible" @close-canva="closeCanvas" />
-          </transition>
+        </transition>
     </teleport>
 </template>
 
@@ -149,5 +157,5 @@ header nav {
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
     z-index: 9998;
-  }
+}
 </style>

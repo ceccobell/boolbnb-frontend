@@ -1,10 +1,8 @@
 <script>
 import NavBar from "./components/NavBar.vue"
-import HomePage from "./components/HomePage.vue"
 
 export default {
     components: {
-        HomePage,
         NavBar,
     },
 }
@@ -12,7 +10,7 @@ export default {
 
 <template>
     <NavBar />
-    <HomePage />
+    <router-view />
 </template>
 
 <style scoped></style>
