@@ -34,7 +34,7 @@ export default {
     <div class="container" v-if="store.apartmentsSponsored.length > 0">
         <div class="row">
             <div class="col-12">
-                <h1>Appartamenti in primo piano</h1>
+                <h1>Appartamenti in Evidenza</h1>
             </div>
             <div class="col-4" v-for="(apartmentSponsored, index) in store.apartmentsSponsored">
                 <Card :apartment="apartmentSponsored" :showSponsorButton="false" />
