@@ -5,4 +5,5 @@ export const store = reactive({
     sponsorPackages: [],
     apartmentToSponsor: {},
     selectedPlan: null,
+    apartmentsSponsored: [],
 })

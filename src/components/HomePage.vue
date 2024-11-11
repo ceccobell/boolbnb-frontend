@@ -1,6 +1,7 @@
 <script>
 import ApartmentSearch from "./ApartmentSearch.vue"
 import Card from "./Card.vue"
+import { store } from "../store"
 
 export default {
     components: {
@@ -10,6 +11,7 @@ export default {
     data() {
         return {
             apartments_filtered: [],
+            store,
         }
     },
     methods: {
@@ -31,6 +33,16 @@ export default {
     </main>
     <div class="container">
         <div class="row">
+            <div class="col-12">
+                <h1>Appartamenti in primo piano</h1>
+            </div>
+            <div class="col-4" v-for="(apartmentSponsored, index) in store.apartmentsSponsored">
+                <Card :apartment="apartmentSponsored" />
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
             <div class="col-4" v-for="(apartment, index) in apartments_filtered" :key="index">
                 <Card :apartment="apartment" />
             </div>
@@ -40,7 +52,7 @@ export default {
 
 <style scoped>
 main {
-    height: calc(100vh - 75px);
+    height: calc(70vh - 75px);
     margin-top: 75px;
     background-image: url(https://images.unsplash.com/photo-1545324418-cc1a3fa10c00);
     background-repeat: no-repeat;

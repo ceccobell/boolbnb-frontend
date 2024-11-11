@@ -13,14 +13,12 @@ export default {
             store.selectedPlan = plan
         },
         sponsorApartment() {
-            console.log(store.apartmentToSponsor.id, store.selectedPlan.id)
             axios
                 .post("http://127.0.0.1:8000/api/sponsor-apartment", {
                     apartment_id: store.apartmentToSponsor.id,
                     package_id: store.selectedPlan.id,
                 })
                 .then((response) => {
-                    console.log(store.apartmentToSponsor.id, store.selectedPlan.id)
                     console.log("Hai sponsorizzato l'appartamento:", store.apartmentToSponsor)
                 })
                 .catch((error) => {

@@ -23,9 +23,20 @@ export default {
                     console.error("Errore nel recupero dei pacchetti di sponsorizzazione:", error)
                 })
         },
+        getSponsoredApartments() {
+            axios
+                .get("http://127.0.0.1:8000/api/sponsoredApartments")
+                .then((response) => {
+                    store.apartmentsSponsored = response.data.apartments
+                })
+                .catch((error) => {
+                    console.error("Errore nel recupero dei pacchetti di sponsorizzazione:", error)
+                })
+        },
     },
     mounted() {
         this.getSponsorPackages()
+        this.getSponsoredApartments()
     },
 }
 </script>
