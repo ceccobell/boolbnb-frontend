@@ -15,6 +15,7 @@
             <a href="#" class="btn btn-primary">More Info</a>
         </div>
         <button
+            v-if="showSponsorButton"
             type="button"
             class="btn btn-warning position-absolute top-0 end-0 m-2"
             @click="sponsor(apartment)"
@@ -30,12 +31,14 @@ import { store } from "../store"
 export default {
     props: {
         apartment: Object,
+        showSponsorButton: Boolean,
     },
     data() {
         return {
             store,
         }
     },
+
     methods: {
         sponsor(apartment) {
             store.apartmentToSponsor = apartment

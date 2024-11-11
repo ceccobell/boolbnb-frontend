@@ -18,11 +18,6 @@ export default {
             services: [],
         }
     },
-    computed: {
-        sortedServices() {
-            return this.services.slice().sort((a, b) => a.service_name.localeCompare(b.service_name));
-        }
-    },
     methods: {
         searchApartments() {
             if (this.searchParams.address.length) {
@@ -151,7 +146,13 @@ export default {
                 </div>
                 <div class="mt-4 d-flex flex-wrap justify-content-between align-items-center gap-4">
                     <div class="col-3 mt-4">
-                        <button class="btn btn-collapse-custom" type="button" data-bs-toggle="collapse" data-bs-target="#collapseServices" aria-expanded="false" aria-controls="collapseServices">
+                        <button
+                            class="btn btn-collapse-custom"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseServices"
+                            aria-expanded="false"
+                            aria-controls="collapseServices">
                             Filtri avanzati
                         </button>
                     </div>
@@ -159,7 +160,8 @@ export default {
                         <div class="mb-3 w-100">
                             <label for="radius" class="form-label d-block">
                                 <i class="fa-solid fa-route me-2"></i>
-                                Raggio di ricerca: <span class="radius-value">{{ searchParams.radius }}</span> km
+                                Raggio di ricerca:
+                                <span class="radius-value">{{ searchParams.radius }}</span> km
                             </label>
                             <input
                                 type="range"
@@ -168,27 +170,27 @@ export default {
                                 v-model="searchParams.radius"
                                 min="0"
                                 max="100"
-                                step="1"
-                            />
+                                step="1" />
                         </div>
                     </div>
                     <div class="collapse" id="collapseServices">
-                      <div class="mt-2 d-flex flex-wrap justify-content-start align-items-center gap-4">
-                          <div
-                              class="col-2 form-check form-switch custom-checkbox"
-                              v-for="(service, index) in sortedServices"
-                              :key="index">
-                              <input
-                                  class="form-check-input"
-                                  type="checkbox"
-                                  :checked="searchParams.services_filtered.includes(service.id)"
-                                  @change="toggleService(service)" />
-                              <label class="form-check-label">
-                                  <i :class="`${service.service_icon} me-1 ms-1 custom-icon`"></i>
-                                  {{ service.service_name }}
-                              </label>
-                          </div>
-                      </div>
+                        <div
+                            class="mt-2 d-flex flex-wrap justify-content-start align-items-center gap-4">
+                            <div
+                                class="col-2 form-check form-switch custom-checkbox"
+                                v-for="(service, index) in services"
+                                :key="index">
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    :checked="searchParams.services_filtered.includes(service.id)"
+                                    @change="toggleService(service)" />
+                                <label class="form-check-label">
+                                    <i :class="`${service.service_icon} me-1 ms-1 custom-icon`"></i>
+                                    {{ service.service_name }}
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

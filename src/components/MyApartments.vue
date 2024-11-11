@@ -45,7 +45,7 @@ export default {
         <div class="container">
             <div class="row">
                 <div class="col-4" v-for="(myApartment, index) in myApartments" :key="index">
-                    <Card :apartment="myApartment" />
+                    <Card :apartment="myApartment" :showSponsorButton="true" />
                 </div>
             </div>
             <SponsorModal />

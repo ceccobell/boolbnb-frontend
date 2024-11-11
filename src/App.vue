@@ -18,6 +18,7 @@ export default {
                 .get("http://127.0.0.1:8000/api/packages")
                 .then((response) => {
                     store.sponsorPackages = response.data.packages
+                    store.selectedPlan = store.sponsorPackages[1]
                 })
                 .catch((error) => {
                     console.error("Errore nel recupero dei pacchetti di sponsorizzazione:", error)

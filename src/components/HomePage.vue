@@ -31,20 +31,20 @@ export default {
             </div>
         </div>
     </main>
-    <div class="container">
+    <div class="container" v-if="store.apartmentsSponsored.length > 0">
         <div class="row">
             <div class="col-12">
                 <h1>Appartamenti in primo piano</h1>
             </div>
             <div class="col-4" v-for="(apartmentSponsored, index) in store.apartmentsSponsored">
-                <Card :apartment="apartmentSponsored" />
+                <Card :apartment="apartmentSponsored" :showSponsorButton="false" />
             </div>
         </div>
     </div>
     <div class="container">
         <div class="row">
             <div class="col-4" v-for="(apartment, index) in apartments_filtered" :key="index">
-                <Card :apartment="apartment" />
+                <Card :apartment="apartment" :showSponsorButton="false" />
             </div>
         </div>
     </div>

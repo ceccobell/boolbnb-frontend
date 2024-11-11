@@ -8,6 +8,11 @@ export default {
             store,
         }
     },
+    computed: {
+        apartmentToSponsor() {
+            return store.apartmentToSponsor
+        },
+    },
     methods: {
         selectPlan(plan) {
             store.selectedPlan = plan
@@ -52,6 +57,22 @@ export default {
                 </div>
                 <div class="modal-body">
                     <div class="container-fluid">
+                        <div class="row mb-2">
+                            <div
+                                class="col-4"
+                                v-if="
+                                    apartmentToSponsor.images && apartmentToSponsor.images[0].url
+                                ">
+                                <img
+                                    :src="apartmentToSponsor.images[0].url"
+                                    class="card-img-top"
+                                    alt="Property Image" />
+                            </div>
+                            <div class="col-8">
+                                <h5 class="card-title">{{ apartmentToSponsor.title }}</h5>
+                                <p class="card-text">{{ apartmentToSponsor.description }}</p>
+                            </div>
+                        </div>
                         <div class="row">
                             <div
                                 class="col-4"
