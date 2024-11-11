@@ -26,7 +26,7 @@ export default {
         }
     },
     methods: {
-        closeCanvas(value) {
+        closeCanvas() {
             this.isAuthFormVisible = false
         },
         selectItem(selectedItem) {

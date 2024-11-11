@@ -17,19 +17,29 @@
         <button
             type="button"
             class="btn btn-warning position-absolute top-0 end-0 m-2"
-            @click="sponsor(apartment)">
+            @click="sponsor(apartment)"
+            data-bs-toggle="modal"
+            data-bs-target="#staticBackdrop">
             <i class="fa-solid fa-crown"></i> Sponsor
         </button>
     </div>
 </template>
 
 <script>
+import { store } from "../store"
 export default {
     props: {
         apartment: Object,
     },
+    data() {
+        return {
+            store,
+        }
+    },
     methods: {
-        sponsor(apartment) {},
+        sponsor(apartment) {
+            store.apartmentToSponsor = apartment
+        },
     },
 }
 </script>

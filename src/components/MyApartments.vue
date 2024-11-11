@@ -1,14 +1,18 @@
 <script>
 import axios from "axios"
 import Card from "./Card.vue"
+import { store } from "../store"
+import SponsorModal from "./SponsorModal.vue"
 
 export default {
     components: {
         Card,
+        SponsorModal,
     },
     data() {
         return {
             myApartments: [],
+            store,
         }
     },
     methods: {
@@ -23,7 +27,6 @@ export default {
                     },
                 })
                 .then((response) => {
-                    console.log(response.data)
                     this.myApartments = response.data.apartments
                 })
                 .catch((error) => {
@@ -45,6 +48,7 @@ export default {
                     <Card :apartment="myApartment" />
                 </div>
             </div>
+            <SponsorModal />
         </div>
     </main>
 </template>
