@@ -2,13 +2,11 @@
 import ApartmentSearch from "./ApartmentSearch.vue"
 import Card from "./Card.vue"
 import { store } from "../store"
-import ShowInfoApt from "./ShowInfoApt.vue"
 
 export default {
     components: {
         ApartmentSearch,
         Card,
-        ShowInfoApt,
     },
     data() {
         return {
@@ -43,7 +41,6 @@ export default {
             </div>
         </div>
     </div>
-    <ShowInfoApt />
     <div class="container">
         <div class="row">
             <div class="col-4" v-for="(apartment, index) in apartments_filtered" :key="index">

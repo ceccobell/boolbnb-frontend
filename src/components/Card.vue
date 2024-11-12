@@ -1,5 +1,5 @@
 <template>
-    <div class="card">
+    <div class="card" @click="goToApartmentDetails(apartment)">
         <img
             v-if="apartment.images.length > 0 && apartment.images[0].url"
             :src="apartment.images[0].url"
@@ -41,6 +41,10 @@ export default {
     methods: {
         sponsor(apartment) {
             store.apartmentToSponsor = apartment
+        },
+        goToApartmentDetails(apartment) {
+            store.currentApartment = apartment
+            this.$router.push({ name: "ApartmentDetails", params: { slug: apartment.slug } })
         },
     },
 }
