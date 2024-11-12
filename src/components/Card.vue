@@ -12,12 +12,11 @@
                 <li><strong>Rooms:</strong> {{ apartment.n_rooms }}</li>
                 <li><strong>Beds:</strong> {{ apartment.n_beds }}</li>
             </ul>
-            <a href="#" class="btn btn-primary">More Info</a>
         </div>
         <button
             v-if="showSponsorButton"
             type="button"
-            class="btn btn-warning position-absolute top-0 end-0 m-2"
+            class="btn position-absolute top-0 end-0 m-2"
             @click="sponsor(apartment)"
             data-bs-toggle="modal"
             data-bs-target="#staticBackdrop">
@@ -50,10 +49,21 @@ export default {
 <style scoped>
 .card {
     margin: 15px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: scale(1.05);
 }
 
 .card-img-top {
     height: 200px;
     object-fit: cover;
+}
+
+.btn {
+    background-color: #ec622b;
+    color: white;
 }
 </style>

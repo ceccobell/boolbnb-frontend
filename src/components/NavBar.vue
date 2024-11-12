@@ -79,7 +79,7 @@ export default {
     <header>
         <nav class="navbar navbar-expand-lg bg-body-tertiary">
             <div class="container d-flex justify-content-between">
-                <a class="navbar-brand" href="#">
+                <a class="navbar-brand" href="/">
                     <img src="/boolbnb_logo.png" alt="logo" class="logo" />
                 </a>
                 <div class="" id="navbarSupportedContent">

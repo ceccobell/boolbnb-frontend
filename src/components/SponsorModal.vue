@@ -96,7 +96,7 @@ export default {
                     </div>
                 </div>
                 <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-warning" @click="sponsorApartment">
+                    <button type="button" class="btn" @click="sponsorApartment">
                         Procedi al pagamento
                     </button>
                 </div>
@@ -113,5 +113,10 @@ export default {
 
 .card {
     cursor: pointer;
+}
+
+.btn {
+    background-color: #ec622b;
+    color: white;
 }
 </style>
