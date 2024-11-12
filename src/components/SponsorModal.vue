@@ -1,6 +1,7 @@
 <script>
 import { store } from "../store"
 import axios from "axios"
+import braintree from "braintree-web"
 
 export default {
     data() {
@@ -109,6 +110,7 @@ export default {
 .modal {
     --bs-modal-width: 80% !important;
     margin: 0 auto;
+    z-index: 3243;
 }
 
 .card {
