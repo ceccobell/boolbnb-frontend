@@ -1,10 +1,7 @@
 <template>
     <div class="card" @click="goToApartmentDetails(apartment)">
-        <img
-            v-if="apartment.images.length > 0 && apartment.images[0].url"
-            :src="apartment.images[0].url"
-            class="card-img-top"
-            alt="Property Image" />
+        <img v-if="apartment.images.length > 0 && apartment.images[0].url" :src="apartment.images[0].url"
+            class="card-img-top" alt="Property Image" />
         <div class="card-body">
             <h5 class="card-title">{{ apartment.title }}</h5>
             <p class="card-text">{{ apartment.description }}</p>
@@ -13,13 +10,8 @@
                 <li><strong>Beds:</strong> {{ apartment.n_beds }}</li>
             </ul>
         </div>
-        <button
-            v-if="showSponsorButton"
-            type="button"
-            class="btn position-absolute top-0 end-0 m-2"
-            @click="sponsor(apartment)"
-            data-bs-toggle="modal"
-            data-bs-target="#staticBackdrop">
+        <button v-if="showSponsorButton" type="button" class="btn position-absolute top-0 end-0 m-2"
+            @click="sponsor(apartment)" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
             <i class="fa-solid fa-crown"></i> Sponsor
         </button>
     </div>

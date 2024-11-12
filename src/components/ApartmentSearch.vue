@@ -1,7 +1,7 @@
 <script>
 import axios from "axios"
 import debounce from "lodash.debounce"
-import { computed } from "vue"
+import { store } from "../store"
 
 export default {
     data() {
@@ -19,6 +19,7 @@ export default {
         }
     },
     methods: {
+        // Funzione per eseguire la ricerca degli appartamenti
         searchApartments() {
             if (this.searchParams.address.length) {
                 axios
@@ -27,7 +28,9 @@ export default {
                     })
                     .then((response) => {
                         this.apartments = response.data
-                        this.$emit("getApartments", this.apartments)
+                        // Salva i dati filtrati nel store
+                        store.filteredApartments = this.apartments
+                        this.$emit("getApartments", this.apartments) // Passa i dati al componente principale
                         console.log("Risultati ricerca:", response.data)
                     })
                     .catch((error) => {
@@ -37,6 +40,7 @@ export default {
                 console.error("Inserisci un indirizzo")
             }
         },
+        // Funzione per ottenere i servizi
         getServices() {
             axios
                 .get("http://127.0.0.1:8000/api/services")
@@ -44,21 +48,22 @@ export default {
                     this.services = response.data
                 })
                 .catch((error) => {
-                    console.error("error:", error.response.data)
+                    console.error("Errore nel recupero dei servizi:", error.response.data)
                 })
         },
+        // Funzione per la ricerca dell'indirizzo con debounce
         searchAddress: debounce(function () {
-            if (this.searchParams.address.length < 3) return // Evita ricerche troppo brevi
+            if (this.searchParams.address.length < 3) return
 
             axios
                 .get(
                     "https://api.tomtom.com/search/2/search/" +
-                        encodeURIComponent(this.searchParams.address) +
-                        ".json",
+                    encodeURIComponent(this.searchParams.address) +
+                    ".json",
                     {
                         params: {
                             key: "Qwrc50MvZYOeJvH56v7hQrbf5HSzDfyX",
-                            limit: 5, // Limita i risultati a 5
+                            limit: 5,
                         },
                     }
                 )
@@ -66,20 +71,20 @@ export default {
                     this.results = response.data.results
                 })
                 .catch((error) => {
-                    console.error("Errore nella ricerca:", error)
+                    console.error("Errore nella ricerca dell'indirizzo:", error)
                 })
-        }, 500), // Imposta il debounce a 500ms (mezzo secondo)
+        }, 500),
+        // Seleziona l'indirizzo suggerito
         selectAddress(result) {
             this.searchParams.address = result.address.freeformAddress
             this.results = []
         },
+        // Aggiungi o rimuovi servizi dal filtro
         toggleService(service) {
             const index = this.searchParams.services_filtered.indexOf(service.id)
             if (index === -1) {
-                // Se il servizio non è già selezionato, aggiungilo
                 this.searchParams.services_filtered.push(service.id)
             } else {
-                // Se il servizio è già selezionato, rimuovilo
                 this.searchParams.services_filtered.splice(index, 1)
             }
         },
@@ -94,27 +99,21 @@ export default {
     <div class="container">
         <div class="bg-white rounded-3 shadow p-4">
             <div class="row g-3">
+                <!-- Input per l'indirizzo -->
                 <div class="col-3 position-relative">
                     <div class="input-group">
-                        <span class="input-group-text" id="basic-addon1"
-                            ><i class="fa-solid fa-location-dot"></i
-                        ></span>
-                        <input
-                            type="text"
-                            class="form-control custom-select"
-                            placeholder="Enter city"
-                            @input="searchAddress"
-                            v-model="searchParams.address" />
+                        <span class="input-group-text" id="basic-addon1"><i class="fa-solid fa-location-dot"></i></span>
+                        <input type="text" class="form-control custom-select" placeholder="Enter city"
+                            @input="searchAddress" v-model="searchParams.address" />
                     </div>
                     <ul v-if="results.length">
-                        <li
-                            v-for="result in results"
-                            :key="result.id"
-                            @click="selectAddress(result)">
+                        <li v-for="result in results" :key="result.id" @click="selectAddress(result)">
                             {{ result.address.freeformAddress }}
                         </li>
                     </ul>
                 </div>
+
+                <!-- Filtri per camere e letti -->
                 <div class="col-3">
                     <div class="input-group">
                         <span class="input-group-text bg-light">
@@ -139,64 +138,18 @@ export default {
                         </select>
                     </div>
                 </div>
+
+                <!-- Bottone per avviare la ricerca -->
                 <div class="col-3">
                     <button class="btn btn-search-custom w-100" @click="searchApartments">
                         <i class="fa-solid fa-magnifying-glass"></i> Search
                     </button>
                 </div>
-                <div class="mt-4 d-flex flex-wrap justify-content-between align-items-center gap-4">
-                    <div class="col-3 mt-4">
-                        <button
-                            class="btn btn-collapse-custom"
-                            type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#collapseServices"
-                            aria-expanded="false"
-                            aria-controls="collapseServices">
-                            Filtri avanzati
-                        </button>
-                    </div>
-                    <div class="col-6 mt-4">
-                        <div class="mb-3 w-100">
-                            <label for="radius" class="form-label d-block">
-                                <i class="fa-solid fa-route me-2"></i>
-                                Raggio di ricerca:
-                                <span class="radius-value">{{ searchParams.radius }}</span> km
-                            </label>
-                            <input
-                                type="range"
-                                class="form-range w-100"
-                                id="radius"
-                                v-model="searchParams.radius"
-                                min="0"
-                                max="100"
-                                step="1" />
-                        </div>
-                    </div>
-                    <div class="collapse" id="collapseServices">
-                        <div
-                            class="mt-2 d-flex flex-wrap justify-content-start align-items-center gap-4">
-                            <div
-                                class="col-2 form-check form-switch custom-checkbox"
-                                v-for="(service, index) in services"
-                                :key="index">
-                                <input
-                                    class="form-check-input"
-                                    type="checkbox"
-                                    :checked="searchParams.services_filtered.includes(service.id)"
-                                    @change="toggleService(service)" />
-                                <label class="form-check-label">
-                                    <i :class="`${service.service_icon} me-1 ms-1 custom-icon`"></i>
-                                    {{ service.service_name }}
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 </template>
+
 
 <style scoped>
 ul {
@@ -229,7 +182,7 @@ li:hover {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%0, 0, 0, 1%29'/%3e%3c/svg%3e");
 }
 
-.custom-checkbox .form-check-input:checked + .form-check-label {
+.custom-checkbox .form-check-input:checked+.form-check-label {
     color: #ec622b;
 }
 
@@ -275,6 +228,7 @@ li:hover {
 .btn-collapse-custom[aria-expanded="true"] {
     background-color: #ec622b;
     color: black;
+
     &:hover {
         background-color: #cf5626;
         color: white;

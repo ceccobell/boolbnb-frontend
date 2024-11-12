@@ -35,6 +35,9 @@ export default {
         },
     },
     methods: {
+        goBack() {
+            this.$router.go(-1); // Torna alla pagina precedente
+        },
         prevSlide() {
             this.activeIndex =
                 this.activeIndex === 0
@@ -284,6 +287,10 @@ export default {
                             <button type="submit" class="btn btn-primary">Invia Messaggio</button>
                         </form>
                     </div>
+                    <button @click="goBack" class="btn btn-secondary mb-3">
+                        <i class="fas fa-arrow-left me-2"></i>Indietro
+                    </button>
+
                 </div>
             </div>
         </div>

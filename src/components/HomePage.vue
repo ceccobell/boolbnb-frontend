@@ -10,7 +10,7 @@ export default {
     },
     data() {
         return {
-            apartments_filtered: [],
+            apartments_filtered: store.filteredApartments, // Usa direttamente gli appartamenti filtrati dal store
             store,
         }
     },
@@ -18,8 +18,15 @@ export default {
         handleApartments(apartments) {
             console.log("Dati degli appartamenti:", apartments)
             this.apartments_filtered = apartments
+            store.filteredApartments = apartments // Salva gli appartamenti filtrati nel store
         },
     },
+    mounted() {
+        // Quando la pagina viene caricata, usa gli appartamenti già filtrati
+        if (store.filteredApartments.length > 0) {
+            this.apartments_filtered = store.filteredApartments
+        }
+    }
 }
 </script>
 
@@ -27,20 +34,25 @@ export default {
     <main>
         <div class="container">
             <div class="row g-3">
+                <!-- Componente di ricerca appartamenti -->
                 <ApartmentSearch @getApartments="handleApartments" />
             </div>
         </div>
     </main>
+
+    <!-- Sezione appartamenti sponsorizzati -->
     <div class="container" v-if="store.apartmentsSponsored.length > 0">
         <div class="row">
             <div class="col-12">
                 <h1>Appartamenti in Evidenza</h1>
             </div>
-            <div class="col-4" v-for="(apartmentSponsored, index) in store.apartmentsSponsored">
+            <div class="col-4" v-for="(apartmentSponsored, index) in store.apartmentsSponsored" :key="index">
                 <Card :apartment="apartmentSponsored" :showSponsorButton="false" />
             </div>
         </div>
     </div>
+
+    <!-- Sezione appartamenti filtrati -->
     <div class="container">
         <div class="row">
             <div class="col-4" v-for="(apartment, index) in apartments_filtered" :key="index">

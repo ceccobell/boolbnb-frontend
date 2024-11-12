@@ -7,4 +7,5 @@ export const store = reactive({
     selectedPlan: null,
     apartmentsSponsored: [],
     currentApartment: {},
+    filteredApartments: [],
 })
