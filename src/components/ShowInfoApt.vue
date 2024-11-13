@@ -25,6 +25,7 @@ export default {
             successMessage: "",
             apartmentAddress: "",
             mapUrl: "",
+            showModal: true,
         }
     },
     watch: {
@@ -35,6 +36,23 @@ export default {
         },
     },
     methods: {
+        deleteApartment() {
+            const token = localStorage.getItem("authToken")
+            axios
+                .delete(`http://127.0.0.1:8000/api/deleteapartment/${store.currentApartment.id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                })
+                .then((response) => {
+                    console.log("Appartamento eliminato", response.data)
+                    this.showModal = false
+                    this.$router.push("/myapartments")
+                })
+                .catch((error) => {
+                    console.error("Errore nell'eliminazione", error)
+                })
+        },
         goBack() {
             this.$router.go(-1) // Torna alla pagina precedente
         },
@@ -329,9 +347,66 @@ export default {
                             <button type="submit" class="btn btn-primary">Invia Messaggio</button>
                         </form>
                     </div>
-                    <button @click="goBack" class="btn btn-secondary mb-3">
-                        <i class="fas fa-arrow-left me-2"></i>Indietro
-                    </button>
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <button @click="goBack" class="btn btn-secondary mb-3 me-2">
+                                <i class="fas fa-arrow-left me-2"></i>Indietro
+                            </button>
+                        </div>
+                        <div>
+                            <router-link :to="'/edit-apartment'">
+                                <button class="btn btn-warning border-0 me-2">Modifica</button>
+                            </router-link>
+                            <button
+                                type="button"
+                                class="btn btn-danger"
+                                data-bs-toggle="modal"
+                                data-bs-target="#staticBackdrop">
+                                Elimina
+                            </button>
+
+                            <!-- Modal -->
+                            <div
+                                v-if="showModal"
+                                class="modal fade"
+                                id="staticBackdrop"
+                                data-bs-backdrop="static"
+                                data-bs-keyboard="false"
+                                tabindex="-1"
+                                aria-labelledby="staticBackdropLabel"
+                                aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="staticBackdropLabel">
+                                                Sei sicuro di voler eliminare l'appartamento?
+                                            </h1>
+                                            <button
+                                                type="button"
+                                                class="btn-close"
+                                                data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+
+                                        <div class="modal-footer">
+                                            <button
+                                                type="button"
+                                                class="btn btn-secondary"
+                                                data-bs-dismiss="modal">
+                                                Close
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="btn btn-danger"
+                                                @click="deleteApartment">
+                                                Elimina
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -360,7 +435,6 @@ main {
 }
 
 .icon {
-    font-size: 18px;
     color: #ec622b;
 }
 
