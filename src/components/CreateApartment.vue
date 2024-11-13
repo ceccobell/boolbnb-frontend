@@ -22,6 +22,7 @@ export default {
                 services: [],
             },
             results: [],
+            errors: {},
         }
     },
     methods: {
@@ -84,18 +85,23 @@ export default {
             this.form.services.forEach((serviceId) => {
                 formData.append("services[]", serviceId)
             })
-
+            const token = localStorage.getItem("authToken")
             axios
                 .post("http://127.0.0.1:8000/api/addapartment", formData, {
                     headers: {
                         "Content-Type": "multipart/form-data",
+                        Authorization: `Bearer ${token}`,
                     },
                 })
                 .then((response) => {
                     console.log("Apartment created:", response.data)
+                    this.errors = {}
                 })
                 .catch((error) => {
-                    console.error("Error creating apartment:", error)
+                    if (error.response && error.response.data.errors) {
+                        this.errors = error.response.data.errors // Gestisci gli errori di validazione
+                        console.error("Error creating apartment:", this.errors)
+                    }
                 })
         },
     },
@@ -103,158 +109,168 @@ export default {
 </script>
 
 <template>
-    <div class="row">
-        <form @submit.prevent="createApartment">
-            <div class="row">
-                <div class="mb-3 col-6">
-                    <label for="title" class="form-label"
-                        >Titolo annuncio <span class="text-danger">*</span></label
-                    >
-                    <input
-                        type="text"
-                        name="title"
-                        class="form-control"
-                        v-model="form.title"
-                        required />
-                </div>
-                <div class="mb-3 col-6">
-                    <label for="property" class="form-label"
-                        >Proprietà <span class="text-danger">*</span></label
-                    >
-                    <input
-                        type="text"
-                        name="property"
-                        class="form-control"
-                        v-model="form.property"
-                        required />
-                </div>
-                <div class="mb-3 col-12 position-relative">
-                    <label for="address" class="form-label"
-                        >Città ed indirizzo<span class="text-danger">*</span></label
-                    >
-                    <input
-                        type="text"
-                        name="address"
-                        class="form-control"
-                        v-model="form.address"
-                        @input="searchAddress"
-                        required />
-                    <ul v-if="results.length">
-                        <li
-                            v-for="result in results"
-                            :key="result.id"
-                            @click="selectAddress(result)">
-                            {{ result.address.freeformAddress }}
-                        </li>
-                    </ul>
-                </div>
-                <div class="mb-3">
-                    <label for="description" class="form-label">Descrizione</label>
-                    <textarea
-                        name="description"
-                        class="form-control"
-                        v-model="form.description"
-                        required></textarea>
-                </div>
-                <div class="mb-3 col-3">
-                    <label for="n_rooms" class="form-label"
-                        >Numero Camere <span class="text-danger">*</span></label
-                    >
-                    <input
-                        type="number"
-                        min="1"
-                        name="n_rooms"
-                        class="form-control"
-                        v-model="form.n_rooms"
-                        required />
-                </div>
-                <div class="mb-3 col-3">
-                    <label for="n_beds" class="form-label"
-                        >Posti letto <span class="text-danger">*</span></label
-                    >
-                    <input
-                        type="number"
-                        min="1"
-                        name="n_beds"
-                        class="form-control"
-                        v-model="form.n_beds"
-                        required />
-                </div>
-                <div class="mb-3 col-3">
-                    <label for="n_bathrooms" class="form-label"
-                        >Numero bagni <span class="text-danger">*</span></label
-                    >
-                    <input
-                        type="number"
-                        min="1"
-                        name="n_bathrooms"
-                        class="form-control"
-                        v-model="form.n_bathrooms"
-                        required />
-                </div>
-                <div class="mb-3 col-3">
-                    <label for="square_meters" class="form-label"
-                        >Metri quadri <span class="text-danger">*</span></label
-                    >
-                    <input
-                        type="number"
-                        name="square_meters"
-                        class="form-control"
-                        v-model="form.square_meters"
-                        required />
-                </div>
-                <div class="mb-3 col-4">
-                    <label for="status" class="form-label"
-                        >Status <span class="text-danger">*</span></label
-                    >
-                    <select name="status" class="form-control" v-model="form.status" required>
-                        <option value="Disponibile">Disponibile</option>
-                        <option value="Non Disponibile">Non Disponibile</option>
-                    </select>
-                </div>
-
-                <div class="mb-3 col-4">
-                    <label for="main_image" class="form-label">Immagine Copertina</label>
-                    <input
-                        type="file"
-                        name="main_image"
-                        class="form-control"
-                        @change="form.main_image = $event.target.files[0]"
-                        required />
-                </div>
-                <div class="mb-3 col-4">
-                    <label for="image[]" class="form-label">Altre Immagini</label>
-                    <input
-                        type="file"
-                        name="image[]"
-                        class="form-control"
-                        multiple
-                        @change="form.images = Array.from($event.target.files)" />
-                </div>
-
-                <div
-                    class="mb-3 col-3"
-                    v-for="(service, index) in store.services"
-                    :key="service.id">
-                    <div class="form-check">
+    <main>
+        <div class="container">
+            <form @submit.prevent="createApartment">
+                <div class="row">
+                    <div class="mb-3 col-6">
+                        <label for="title" class="form-label"
+                            >Titolo annuncio <span class="text-danger">*</span></label
+                        >
+                        <input type="text" name="title" class="form-control" v-model="form.title" />
+                        <div v-if="errors.title" class="invalid-feedback">
+                            {{ errors.title[0] }}
+                        </div>
+                    </div>
+                    <div class="mb-3 col-6">
+                        <label for="property" class="form-label"
+                            >Proprietà <span class="text-danger">*</span></label
+                        >
                         <input
-                            type="checkbox"
-                            :value="service.id"
-                            class="form-check-input"
-                            v-model="form.services"
-                            :id="'service-' + service.id" />
-                        <label class="form-check-label" :for="'service-' + service.id">
-                            {{ service.service_name }} <i :class="service.service_icon"></i>
-                        </label>
+                            type="text"
+                            name="property"
+                            class="form-control"
+                            v-model="form.property" />
+                        <div v-if="errors.property" class="invalid-feedback">
+                            {{ errors.property[0] }}
+                        </div>
+                    </div>
+                    <div class="mb-3 col-12 position-relative">
+                        <label for="address" class="form-label"
+                            >Città ed indirizzo<span class="text-danger">*</span></label
+                        >
+                        <input
+                            type="text"
+                            name="address"
+                            class="form-control"
+                            v-model="form.address"
+                            @input="searchAddress" />
+                        <div v-if="errors.address" class="invalid-feedback">
+                            {{ errors.address[0] }}
+                        </div>
+                        <ul v-if="results.length">
+                            <li
+                                v-for="result in results"
+                                :key="result.id"
+                                @click="selectAddress(result)">
+                                {{ result.address.freeformAddress }}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Descrizione</label>
+                        <textarea
+                            name="description"
+                            class="form-control"
+                            v-model="form.description"></textarea>
+                        <div v-if="errors.description" class="invalid-feedback">
+                            {{ errors.description[0] }}
+                        </div>
+                    </div>
+                    <div class="mb-3 col-3">
+                        <label for="n_rooms" class="form-label"
+                            >Numero Camere <span class="text-danger">*</span></label
+                        >
+                        <input
+                            type="number"
+                            min="1"
+                            name="n_rooms"
+                            class="form-control"
+                            v-model="form.n_rooms" />
+                    </div>
+                    <div class="mb-3 col-3">
+                        <label for="n_beds" class="form-label"
+                            >Posti letto <span class="text-danger">*</span></label
+                        >
+                        <input
+                            type="number"
+                            min="1"
+                            name="n_beds"
+                            class="form-control"
+                            v-model="form.n_beds" />
+                    </div>
+                    <div class="mb-3 col-3">
+                        <label for="n_bathrooms" class="form-label"
+                            >Numero bagni <span class="text-danger">*</span></label
+                        >
+                        <input
+                            type="number"
+                            min="1"
+                            name="n_bathrooms"
+                            class="form-control"
+                            v-model="form.n_bathrooms" />
+                    </div>
+                    <div class="mb-3 col-3">
+                        <label for="square_meters" class="form-label"
+                            >Metri quadri <span class="text-danger">*</span></label
+                        >
+                        <input
+                            type="number"
+                            name="square_meters"
+                            class="form-control"
+                            v-model="form.square_meters" />
+                    </div>
+                    <div class="mb-3 col-4">
+                        <label for="status" class="form-label"
+                            >Status <span class="text-danger">*</span></label
+                        >
+                        <select name="status" class="form-control" v-model="form.status">
+                            <option value="Disponibile">Disponibile</option>
+                            <option value="Non Disponibile">Non Disponibile</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3 col-4">
+                        <label for="main_image" class="form-label">Immagine Copertina</label>
+                        <input
+                            type="file"
+                            name="main_image"
+                            class="form-control"
+                            @change="form.main_image = $event.target.files[0]" />
+                        <div v-if="errors.main_image" class="invalid-feedback">
+                            {{ errors.main_image[0] }}
+                        </div>
+                    </div>
+                    <div class="mb-3 col-4">
+                        <label for="image[]" class="form-label">Altre Immagini</label>
+                        <input
+                            type="file"
+                            name="image[]"
+                            class="form-control"
+                            multiple
+                            @change="form.images = Array.from($event.target.files)" />
+                    </div>
+
+                    <div v-if="errors.services" class="invalid-feedback mb-1">
+                        {{ errors.services[0] }}
+                    </div>
+                    <div
+                        class="mb-2 col-3"
+                        v-for="(service, index) in store.services"
+                        :key="service.id">
+                        <div class="form-check">
+                            <input
+                                type="checkbox"
+                                :value="service.id"
+                                class="form-check-input"
+                                v-model="form.services"
+                                :id="'service-' + service.id" />
+                            <label class="form-check-label" :for="'service-' + service.id">
+                                {{ service.service_name }} <i :class="service.service_icon"></i>
+                            </label>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <button type="submit" class="btn btn-success">Crea Appartamento</button>
-        </form>
-    </div>
+                <button type="submit" class="btn btn-success">Crea Appartamento</button>
+            </form>
+        </div>
+    </main>
 </template>
 
 <style scoped>
+main {
+    margin-top: 90px;
+}
 ul {
     list-style-type: none;
     cursor: pointer;
@@ -267,5 +283,11 @@ ul {
 li {
     padding: 5px;
     border-bottom: 1px solid #ccc;
+}
+
+.invalid-feedback {
+    display: block;
+    color: red;
+    font-size: 0.875em;
 }
 </style>

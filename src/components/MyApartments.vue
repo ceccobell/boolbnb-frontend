@@ -47,9 +47,14 @@ export default {
         <div class="container">
             <div class="row">
                 <div class="col-12 mt-4">
-                    <button class="btn btn-primary">Aggiungi un Appartamento</button>
+                    <button>
+                        <a
+                            href="/create-apartment"
+                            class="btn btn-primary border-0 text-decoration-none"
+                            >Aggiungi un Appartamento</a
+                        >
+                    </button>
                 </div>
-                <CreateApartment />
                 <div class="col-4" v-for="(myApartment, index) in myApartments" :key="index">
                     <Card :apartment="myApartment" :showSponsorButton="true" />
                 </div>
