@@ -1,39 +1,56 @@
 <script>
-import { store } from "../store"
-import axios from "axios"
-import braintree from "braintree-web"
+import { store } from "../store";
+import axios from "axios";
 
 export default {
     data() {
         return {
             store,
-        }
+        };
     },
     computed: {
         apartmentToSponsor() {
-            return store.apartmentToSponsor
+            return store.apartmentToSponsor;
+        },
+        selectedPlanDetails() {
+            return this.store.sponsorPackages.find(plan => plan.id === this.store.selectedPlan?.id) || {};
         },
     },
     methods: {
-        selectPlan(plan) {
-            store.selectedPlan = plan
+        openModal() {
+            this.resetSelectedPlan();
+        },
+        resetSelectedPlan() {
+            store.selectedPlan = { id: null };
+        },
+        onPlanChange(event) {
+            const selectedPlanId = parseInt(event.target.value);
+            const selectedPlan = this.store.sponsorPackages.find(plan => plan.id === selectedPlanId);
+            this.store.selectedPlan = selectedPlan || { id: null };
         },
         sponsorApartment() {
+            if (!store.selectedPlan || !store.selectedPlan.id) {
+                console.error("Nessun piano selezionato. Seleziona un piano prima di procedere.");
+                return;
+            }
             axios
                 .post("http://127.0.0.1:8000/api/sponsor-apartment", {
                     apartment_id: store.apartmentToSponsor.id,
                     package_id: store.selectedPlan.id,
                 })
                 .then((response) => {
-                    console.log("Hai sponsorizzato l'appartamento:", store.apartmentToSponsor)
+                    console.log("Hai sponsorizzato l'appartamento:", store.apartmentToSponsor);
                 })
                 .catch((error) => {
-                    console.error("Errore nella sponsor:", error)
-                })
+                    console.error("Errore nella sponsor:", error);
+                });
         },
     },
-}
+};
 </script>
+
+
+
 
 <template>
     <div
@@ -43,7 +60,8 @@ export default {
         data-bs-keyboard="false"
         tabindex="-1"
         aria-labelledby="staticBackdropLabel"
-        aria-hidden="true">
+        aria-hidden="true"
+        @shown.bs.modal="openModal">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -61,9 +79,7 @@ export default {
                         <div class="row mb-2">
                             <div
                                 class="col-4"
-                                v-if="
-                                    apartmentToSponsor.images && apartmentToSponsor.images[0].url
-                                ">
+                                v-if="apartmentToSponsor.images && apartmentToSponsor.images[0].url">
                                 <img
                                     :src="apartmentToSponsor.images[0].url"
                                     class="card-img-top"
@@ -74,24 +90,24 @@ export default {
                                 <p class="card-text">{{ apartmentToSponsor.description }}</p>
                             </div>
                         </div>
-                        <div class="row">
-                            <div
-                                class="col-4"
-                                v-for="(plan, index) in store.sponsorPackages"
-                                :key="plan.id">
-                                <div
-                                    class="card h-100 text-center"
-                                    :class="{
-                                        'border-primary':
-                                            store.selectedPlan && store.selectedPlan.id === plan.id,
-                                    }"
-                                    @click="selectPlan(plan)">
-                                    <div class="card-body">
-                                        <h5 class="card-title">{{ plan.package_name }}</h5>
-                                        <p class="card-text display-4">{{ plan.price }}&euro;</p>
-                                        <p class="card-text">{{ plan.hours }} ore</p>
-                                    </div>
-                                </div>
+
+                        <!-- Dropdown di selezione del piano -->
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="planSelect">Seleziona il Piano di Sponsorizzazione</label>
+                                <select
+                                    id="planSelect"
+                                    class="form-select"
+                                    v-model="store.selectedPlan.id"
+                                    @change="onPlanChange">
+                                    <option value="" disabled>Seleziona un piano</option>
+                                    <option
+                                        v-for="plan in store.sponsorPackages"
+                                        :key="plan.id"
+                                        :value="plan.id">
+                                        {{ plan.package_name }} - {{ plan.price }}€
+                                    </option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -106,6 +122,9 @@ export default {
     </div>
 </template>
 
+
+
+
 <style scoped>
 .modal {
     --bs-modal-width: 80% !important;
@@ -113,12 +132,11 @@ export default {
     z-index: 3243;
 }
 
-.card {
-    cursor: pointer;
-}
-
 .btn {
     background-color: #ec622b;
     color: white;
 }
 </style>
+
+
+
