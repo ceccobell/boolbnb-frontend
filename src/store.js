@@ -1,4 +1,4 @@
-import { reactive } from "vue";
+import { reactive } from "vue"
 
 export const store = reactive({
     isAuthenticated: false,
@@ -8,4 +8,5 @@ export const store = reactive({
     apartmentsSponsored: [],
     currentApartment: {},
     filteredApartments: [],
+    services: [],
 })

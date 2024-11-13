@@ -13,6 +13,17 @@ export default {
         }
     },
     methods: {
+        // Funzione per ottenere i servizi
+        getServices() {
+            axios
+                .get("http://127.0.0.1:8000/api/services")
+                .then((response) => {
+                    store.services = response.data
+                })
+                .catch((error) => {
+                    console.error("Errore nel recupero dei servizi:", error.response.data)
+                })
+        },
         getSponsorPackages() {
             axios
                 .get("http://127.0.0.1:8000/api/packages")
@@ -38,6 +49,7 @@ export default {
     mounted() {
         this.getSponsorPackages()
         this.getSponsoredApartments()
+        this.getServices()
     },
 }
 </script>

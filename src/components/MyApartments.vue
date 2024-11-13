@@ -3,11 +3,13 @@ import axios from "axios"
 import Card from "./Card.vue"
 import { store } from "../store"
 import SponsorModal from "./SponsorModal.vue"
+import CreateApartment from "./CreateApartment.vue"
 
 export default {
     components: {
         Card,
         SponsorModal,
+        CreateApartment,
     },
     data() {
         return {
@@ -44,6 +46,10 @@ export default {
     <main>
         <div class="container">
             <div class="row">
+                <div class="col-12 mt-4">
+                    <button class="btn btn-primary">Aggiungi un Appartamento</button>
+                </div>
+                <CreateApartment />
                 <div class="col-4" v-for="(myApartment, index) in myApartments" :key="index">
                     <Card :apartment="myApartment" :showSponsorButton="true" />
                 </div>
