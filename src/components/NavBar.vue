@@ -84,31 +84,18 @@ export default {
                 </a>
                 <div class="" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item" v-for="(item, index) in itemsNavbar" :key="index">
-                            <a
-                                class="nav-link"
-                                :class="item.active ? 'active' : ''"
-                                aria-current="page"
-                                :href="item.url"
-                                @click="selectItem(item)"
-                                >{{ item.nome }}</a
-                            >
+                        <li class="nav-item ps-2" v-for="(item, index) in itemsNavbar" :key="index">
+                            <a class="nav-link position-relative" :class="item.active ? 'active' : ''"
+                                aria-current="page" :href="item.url" @click="selectItem(item)">{{ item.nome }}
+                                <span v-show="item.nome === 'Miei Appartamenti'"
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">{{
+                                    store.messagesCounter }}</span></a>
                         </li>
-                        <li>
-                            <a
-                                v-show="!store.isAuthenticated"
-                                href="#"
-                                class="btn btn-accedi"
-                                @click="isAuthFormVisible = true"
-                                ><i class="fa-solid fa-user"></i> Accedi</a
-                            >
-                            <a
-                                v-show="store.isAuthenticated"
-                                href="#"
-                                class="btn btn-accedi"
-                                @click="logout"
-                                ><i class="fa-solid fa-user"></i> Esci</a
-                            >
+                        <li class="ps-3">
+                            <a v-show="!store.isAuthenticated" href="#" class="btn btn-accedi"
+                                @click="isAuthFormVisible = true"><i class="fa-solid fa-user"></i> Accedi</a>
+                            <a v-show="store.isAuthenticated" href="#" class="btn btn-accedi" @click="logout"><i
+                                    class="fa-solid fa-user"></i> Esci</a>
                         </li>
                     </ul>
                 </div>
