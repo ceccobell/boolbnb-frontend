@@ -8,45 +8,24 @@ export default {
         return {
             store,
             form: {
-                title: store.currentApartment.title,
-                property: store.currentApartment.property,
-                address: store.currentApartment.address,
-                description: store.currentApartment.description,
-                n_rooms: store.currentApartment.n_rooms,
-                n_beds: store.currentApartment.n_beds,
-                n_bathrooms: store.currentApartment.n_bathrooms,
-                square_meters: store.currentApartment.square_meters,
-                status: store.currentApartment.status,
-                main_image: store.currentApartment.main_image,
-                images: store.currentApartment.images,
-                services: store.currentApartment.services,
+                title: store.currentApartment.title || "",
+                property: store.currentApartment.property || "",
+                address: store.currentApartment.address || "",
+                description: store.currentApartment.description || "",
+                n_rooms: store.currentApartment.n_rooms || "",
+                n_beds: store.currentApartment.n_beds || "",
+                n_bathrooms: store.currentApartment.n_bathrooms || "",
+                square_meters: store.currentApartment.square_meters || "",
+                status: store.currentApartment.status || "",
+                main_image: store.currentApartment.main_image || null,
+                images: store.currentApartment.images || [],
+                services: Array.isArray(store.currentApartment.services)
+                    ? store.currentApartment.services.map((service) => service.id)
+                    : [],
             },
             results: [],
             errors: {},
         }
-    },
-    watch: {
-        // Watcher che monitora i cambiamenti di store.currentApartment
-        "store.currentApartment": {
-            handler(newValue) {
-                // Aggiorna form con i nuovi valori
-                this.form = {
-                    title: newValue.title,
-                    property: newValue.property,
-                    address: newValue.address,
-                    description: newValue.description,
-                    n_rooms: newValue.n_rooms,
-                    n_beds: newValue.n_beds,
-                    n_bathrooms: newValue.n_bathrooms,
-                    square_meters: newValue.square_meters,
-                    status: newValue.status,
-                    main_image: newValue.main_image,
-                    images: newValue.images,
-                    services: newValue.services,
-                }
-            },
-            deep: true, // Assicura che il watcher funzioni anche se cambiano le proprietà interne dell'oggetto
-        },
     },
     methods: {
         // Funzione per la ricerca dell'indirizzo con debounce
@@ -87,36 +66,39 @@ export default {
             }
         },
         editApartment() {
+            console.log("Form Data:", this.form)
             const formData = new FormData()
-            formData.append("title", store.currentApartment.title)
-            formData.append("property", store.currentApartment.property)
-            formData.append("address", store.currentApartment.address)
-            formData.append("description", store.currentApartment.description)
-            formData.append("n_rooms", store.currentApartment.n_rooms)
-            formData.append("n_beds", store.currentApartment.n_beds)
-            formData.append("n_bathrooms", store.currentApartment.n_bathrooms)
-            formData.append("square_meters", store.currentApartment.square_meters)
-            formData.append("status", store.currentApartment.status)
-            formData.append("main_image", store.currentApartment.main_image) // Immagine di copertina
+            formData.append("title", this.form.title)
+            formData.append("property", this.form.property)
+            formData.append("address", this.form.address)
+            formData.append("description", this.form.description)
+            formData.append("n_rooms", parseInt(this.form.n_rooms))
+            formData.append("n_beds", parseInt(this.form.n_beds))
+            formData.append("n_bathrooms", parseInt(this.form.n_bathrooms))
+            formData.append("square_meters", parseInt(this.form.square_meters))
+            formData.append("status", this.form.status)
 
-            // Aggiungere ogni file di `images` individualmente
-            store.currentApartment.images.forEach((image, index) => {
-                formData.append(`images[${index}]`, image)
-            })
+            if (this.form.main_image) {
+                formData.append("main_image", this.form.main_image)
+            }
 
-            // Aggiungere ogni ID dei servizi selezionati
-            store.currentApartment.services.forEach((serviceId) => {
-                formData.append("services[]", serviceId)
+            if (this.form.images && this.form.images.length > 0) {
+                this.form.images.forEach((image) => {
+                    formData.append("image[]", image)
+                })
+            }
+
+            this.form.services.forEach((serviceId) => {
+                formData.append("services[]", parseInt(serviceId))
             })
 
             const token = localStorage.getItem("authToken")
             axios
-                .put(
+                .post(
                     `http://127.0.0.1:8000/api/editapartment/${store.currentApartment.id}`,
-                    store.currentApartment,
+                    formData,
                     {
                         headers: {
-                            "Content-Type": "multipart/form-data",
                             Authorization: `Bearer ${token}`,
                         },
                     }
@@ -133,6 +115,24 @@ export default {
                 })
         },
     },
+    created() {
+        this.form = {
+            title: store.currentApartment.title || "",
+            property: store.currentApartment.property || "",
+            address: store.currentApartment.address || "",
+            description: store.currentApartment.description || "",
+            n_rooms: store.currentApartment.n_rooms || "",
+            n_beds: store.currentApartment.n_beds || "",
+            n_bathrooms: store.currentApartment.n_bathrooms || "",
+            square_meters: store.currentApartment.square_meters || "",
+            status: store.currentApartment.status || "",
+            main_image: null,
+            images: [],
+            services: Array.isArray(store.currentApartment.services)
+                ? store.currentApartment.services.map((service) => service.id)
+                : [],
+        }
+    },
 }
 </script>
 
@@ -145,11 +145,7 @@ export default {
                         <label for="title" class="form-label"
                             >Titolo annuncio <span class="text-danger">*</span></label
                         >
-                        <input
-                            type="text"
-                            name="title"
-                            class="form-control"
-                            v-model="store.currentApartment.title" />
+                        <input type="text" name="title" class="form-control" v-model="form.title" />
                         <div v-if="errors.title" class="invalid-feedback">
                             {{ errors.title[0] }}
                         </div>
@@ -162,7 +158,7 @@ export default {
                             type="text"
                             name="property"
                             class="form-control"
-                            v-model="store.currentApartment.property" />
+                            v-model="form.property" />
                         <div v-if="errors.property" class="invalid-feedback">
                             {{ errors.property[0] }}
                         </div>
@@ -175,7 +171,7 @@ export default {
                             type="text"
                             name="address"
                             class="form-control"
-                            v-model="store.currentApartment.address"
+                            v-model="form.address"
                             @input="searchAddress" />
                         <div v-if="errors.address" class="invalid-feedback">
                             {{ errors.address[0] }}
@@ -194,7 +190,7 @@ export default {
                         <textarea
                             name="description"
                             class="form-control"
-                            v-model="store.currentApartment.description"></textarea>
+                            v-model="form.description"></textarea>
                         <div v-if="errors.description" class="invalid-feedback">
                             {{ errors.description[0] }}
                         </div>
@@ -208,7 +204,7 @@ export default {
                             min="1"
                             name="n_rooms"
                             class="form-control"
-                            v-model="store.currentApartment.n_rooms" />
+                            v-model="form.n_rooms" />
                     </div>
                     <div class="mb-3 col-3">
                         <label for="n_beds" class="form-label"
@@ -219,7 +215,7 @@ export default {
                             min="1"
                             name="n_beds"
                             class="form-control"
-                            v-model="store.currentApartment.n_beds" />
+                            v-model="form.n_beds" />
                     </div>
                     <div class="mb-3 col-3">
                         <label for="n_bathrooms" class="form-label"
@@ -230,7 +226,7 @@ export default {
                             min="1"
                             name="n_bathrooms"
                             class="form-control"
-                            v-model="store.currentApartment.n_bathrooms" />
+                            v-model="form.n_bathrooms" />
                     </div>
                     <div class="mb-3 col-3">
                         <label for="square_meters" class="form-label"
@@ -240,16 +236,13 @@ export default {
                             type="number"
                             name="square_meters"
                             class="form-control"
-                            v-model="store.currentApartment.square_meters" />
+                            v-model="form.square_meters" />
                     </div>
                     <div class="mb-3 col-4">
                         <label for="status" class="form-label"
                             >Status <span class="text-danger">*</span></label
                         >
-                        <select
-                            name="status"
-                            class="form-control"
-                            v-model="store.currentApartment.status">
+                        <select name="status" class="form-control" v-model="form.status">
                             <option value="Disponibile">Disponibile</option>
                             <option value="Non Disponibile">Non Disponibile</option>
                         </select>
@@ -288,7 +281,7 @@ export default {
                                 type="checkbox"
                                 :value="service.id"
                                 class="form-check-input"
-                                v-model="store.currentApartment.services"
+                                v-model="form.services"
                                 :id="'service-' + service.id" />
                             <label class="form-check-label" :for="'service-' + service.id">
                                 {{ service.service_name }} <i :class="service.service_icon"></i>
