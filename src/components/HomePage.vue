@@ -26,7 +26,7 @@ export default {
         if (store.filteredApartments.length > 0) {
             this.apartments_filtered = store.filteredApartments
         }
-    }
+    },
 }
 </script>
 
@@ -46,17 +46,22 @@ export default {
             <div class="col-12">
                 <h1>Appartamenti in Evidenza</h1>
             </div>
-            <div class="col-4" v-for="(apartmentSponsored, index) in store.apartmentsSponsored" :key="index">
+            <div
+                class="col-4"
+                v-for="(apartmentSponsored, index) in store.apartmentsSponsored"
+                :key="index">
                 <Card :apartment="apartmentSponsored" :showSponsorButton="false" />
             </div>
         </div>
     </div>
 
     <!-- Sezione appartamenti filtrati -->
-    <div class="container-fluid">
+    <div class="container">
         <div class="row justify-content-center">
             <h1 class="text-center mt-3">Appartamenti Disponibili</h1>
-            <div class="col-xxl-3 col-lg-4 col-md-6 col-sm-12" v-for="(apartment, index) in apartments_filtered"
+            <div
+                class="col-xxl-3 col-lg-4 col-md-6 col-sm-12 my-2"
+                v-for="(apartment, index) in apartments_filtered"
                 :key="index">
                 <Card :apartment="apartment" :showSponsorButton="false" />
             </div>

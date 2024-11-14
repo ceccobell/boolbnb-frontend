@@ -23,7 +23,9 @@ export default {
     <main>
         <div class="container">
             <div class="row">
-                <div class="col-xxl-3 col-lg-4 col-md-6 col-sm-12" v-for="(myApartment, index) in myApartments"
+                <div
+                    class="col-xxl-3 col-lg-4 col-md-6 col-sm-12"
+                    v-for="(myApartment, index) in store.myApartments"
                     :key="index">
                     <Card :apartment="myApartment" :showSponsorButton="true" />
                 </div>
@@ -35,7 +37,6 @@ export default {
 
 <style scoped>
 main {
-    height: calc(100vh - 75px);
-    margin-top: 75px;
+    margin-top: 120px;
 }
 </style>
