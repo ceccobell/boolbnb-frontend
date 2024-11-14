@@ -1,19 +1,23 @@
 <template>
-    <div class="card" @click="goToApartmentDetails(apartment)">
-        <img v-if="apartment.images.length > 0 && apartment.images[0].url" :src="apartment.images[0].url"
-            class="card-img-top" alt="Property Image" />
-        <div class="card-body">
-            <h5 class="card-title">{{ apartment.title }}</h5>
-            <p class="card-text">{{ apartment.description }}</p>
-            <ul>
-                <li><strong>Rooms:</strong> {{ apartment.n_rooms }}</li>
-                <li><strong>Beds:</strong> {{ apartment.n_beds }}</li>
-            </ul>
+    <div class="content">
+        <div class="card border-0" @click="goToApartmentDetails(apartment)">
+            <img v-if="apartment.images.length > 0 && apartment.images[0].url" :src="apartment.images[0].url"
+                class="card-img-top" alt="Property Image" />
+            <div class="card-content">
+                <h2>{{ apartment.title }} <span class="city">{{ apartment.city }}</span></h2>
+                <p>{{ apartment.description }}</p>
+                <a href="#" class="button">
+                    Scopri
+                    <span class="material-symbols-outlined">
+                        &rarr;
+                    </span>
+                </a>
+            </div>
+            <button v-if="showSponsorButton" type="button" class="btn position-absolute top-0 end-0 m-2"
+                @click="sponsor(apartment)" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                <i class="fa-solid fa-crown"></i> Sponsor
+            </button>
         </div>
-        <button v-if="showSponsorButton" type="button" class="btn position-absolute top-0 end-0 m-2"
-            @click="sponsor(apartment)" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-            <i class="fa-solid fa-crown"></i> Sponsor
-        </button>
     </div>
 </template>
 
