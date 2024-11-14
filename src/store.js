@@ -11,4 +11,5 @@ export const store = reactive({
     currentApartment: {},
     filteredApartments: [],
     services: [],
+    messagesCounter: 0,
 })

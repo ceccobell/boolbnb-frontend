@@ -46,20 +46,38 @@ export default {
                 })
         },
         getMyApartments() {
-            const token = localStorage.getItem("authToken")
-            console.log(token)
+            if (localStorage.getItem("authToken")) {
+                const token = localStorage.getItem("authToken")
+                console.log(token)
 
+                axios
+                    .get("http://127.0.0.1:8000/api/myapartments", {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    })
+                    .then((response) => {
+                        store.myApartments = response.data.apartments
+                        store.myApartments.forEach((apartment) => {
+                            apartment.messages = []
+                            this.getMessages(apartment)
+                        })
+                    })
+                    .catch((error) => {
+                        console.error("Errore nel recupero dei tuoi appartamenti:", error)
+                    })
+            }
+        },
+        getMessages(apartment) {
             axios
-                .get("http://127.0.0.1:8000/api/myapartments", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                })
+                .get(`http://127.0.0.1:8000/api/apartments/${apartment.id}/messages`)
                 .then((response) => {
-                    store.myApartments = response.data.apartments
+                    apartment.messages = response.data.message
+                    store.messagesCounter += apartment.messages.length
+                    console.log("Messaggi recuperati:", response.data.message)
                 })
                 .catch((error) => {
-                    console.error("Errore nel recupero dei tuoi appartamenti:", error)
+                    console.error("Errore nel recupero dei messaggi:", error)
                 })
         },
     },
