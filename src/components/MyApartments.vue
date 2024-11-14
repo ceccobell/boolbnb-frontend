@@ -13,31 +13,8 @@ export default {
     },
     data() {
         return {
-            myApartments: [],
             store,
         }
-    },
-    methods: {
-        getMyApartments() {
-            const token = localStorage.getItem("authToken")
-            console.log(token)
-
-            axios
-                .get("http://127.0.0.1:8000/api/myapartments", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                })
-                .then((response) => {
-                    this.myApartments = response.data.apartments
-                })
-                .catch((error) => {
-                    console.error("Errore nel recupero dei tuoi appartamenti:", error)
-                })
-        },
-    },
-    mounted() {
-        this.getMyApartments()
     },
 }
 </script>
@@ -53,7 +30,7 @@ export default {
                         </button></router-link
                     >
                 </div>
-                <div class="col-4" v-for="(myApartment, index) in myApartments" :key="index">
+                <div class="col-4" v-for="(myApartment, index) in store.myApartments" :key="index">
                     <Card :apartment="myApartment" :showSponsorButton="true" />
                 </div>
             </div>

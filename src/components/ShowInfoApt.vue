@@ -270,7 +270,13 @@ export default {
                         <div id="map" class="tomtom-map"></div>
                     </div>
 
-                    <div class="bg-light p-4 rounded mt-4 col-12">
+                    <div
+                        class="bg-light p-4 rounded mt-4 col-12"
+                        v-if="
+                            !store.myApartments.some(
+                                (item) => item.id === store.currentApartment.id
+                            )
+                        ">
                         <h3 class="h5">Contatta il Proprietario</h3>
                         <form @submit.prevent="sendMessage">
                             <div
@@ -353,7 +359,12 @@ export default {
                                 <i class="fas fa-arrow-left me-2"></i>Indietro
                             </button>
                         </div>
-                        <div>
+                        <div
+                            v-if="
+                                store.myApartments.some(
+                                    (item) => item.id === store.currentApartment.id
+                                )
+                            ">
                             <router-link :to="'/edit-apartment'">
                                 <button class="btn btn-warning border-0 me-2">Modifica</button>
                             </router-link>
