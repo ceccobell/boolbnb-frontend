@@ -172,15 +172,9 @@ export default {
                 <div v-if="store.currentApartment && store.currentApartment.images.length > 0">
                     <div class="carousel slide carousel-fade" data-bs-ride="carousel">
                         <div class="carousel-inner">
-                            <div
-                                v-for="(image, index) in store.currentApartment.images"
-                                :key="index"
-                                class="carousel-item"
-                                :class="{ active: index === activeIndex }">
-                                <img
-                                    :src="image.url"
-                                    class="w-100"
-                                    style="height: 500px; object-fit: cover"
+                            <div v-for="(image, index) in store.currentApartment.images" :key="index"
+                                class="carousel-item" :class="{ active: index === activeIndex }">
+                                <img :src="image.url" class="w-100" style="height: 500px; object-fit: cover"
                                     alt="Carousel Image" />
                             </div>
                         </div>
@@ -196,7 +190,7 @@ export default {
                 </div>
 
                 <div class="card-body d-flex flex-wrap">
-                    <div class="col-6">
+                    <div class="col-lg-6 col-sm-12 col-12">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h2 class="h4 font-weight-bold text-dark">
                                 {{ store.currentApartment.title }}
@@ -255,8 +249,7 @@ export default {
                         <div class="mb-4">
                             <h3 class="h5">Servizi</h3>
                             <div class="row">
-                                <div
-                                    v-for="(service, index) in store.currentApartment.services"
+                                <div v-for="(service, index) in store.currentApartment.services"
                                     class="col-4 d-flex align-items-center text-muted">
                                     <i :class="`${service.service_icon} icon me-2`"></i>
                                     <span>{{ service.service_name }}</span>
@@ -265,22 +258,50 @@ export default {
                         </div>
                     </div>
 
-                    <div class="mb-4 col-6">
+                    <div class="mb-4 col-lg-6 col-sm-12 col-12">
                         <h3 class="h5">Dove sarai</h3>
                         <div id="map" class="tomtom-map"></div>
                     </div>
+                    <div v-if="store.myApartments.some((item) => item.id === store.currentApartment.id)"
+                        class="bg-light p-4 rounded mt-4 col-12">
+                        <h3 class="h5">Messaggi Ricevuti</h3>
+                        <div v-if="store.currentApartment.messages.length > 0" class="mt-3">
+                            <ul class="list-unstyled">
+                                <li v-for="(message, index) in store.currentApartment.messages" :key="index"
+                                    class="message-item">
+                                    <div>
+                                        <strong>Inviato da: </strong>
+                                        <a data-bs-toggle="collapse" :href="'#messageDetails' + index" role="button"
+                                            aria-expanded="false" aria-controls="'messageDetails' + index">
+                                            {{ message.sender_email }}
+                                        </a>
+                                    </div>
+                                    <div :id="'messageDetails' + index" class="collapse mt-2">
+                                        <div><strong>Nome e cognome:</strong> {{ message.sender_name
+                                            }} {{ message.sender_surname }}</div>
+                                        <div><strong>Oggetto:</strong> {{ message.sender_message_object }}</div>
+                                        <div><strong>Messaggio:</strong> {{ message.sender_message_text }}</div>
+                                    </div>
 
-                    <div
-                        class="bg-light p-4 rounded mt-4 col-12"
-                        v-if="
-                            !store.myApartments.some(
-                                (item) => item.id === store.currentApartment.id
-                            )
-                        ">
+                                    <hr />
+                                </li>
+                            </ul>
+                        </div>
+                        <div v-else>
+                            <p>Non hai ricevuto nessun messaggio.</p>
+                        </div>
+                    </div>
+
+
+
+                    <div class="bg-light p-4 rounded mt-4 col-12" v-if="
+                        !store.myApartments.some(
+                            (item) => item.id === store.currentApartment.id
+                        )
+                    ">
                         <h3 class="h5">Contatta il Proprietario</h3>
                         <form @submit.prevent="sendMessage">
-                            <div
-                                v-if="errors.server && Object.keys(errors.server).length > 0"
+                            <div v-if="errors.server && Object.keys(errors.server).length > 0"
                                 class="alert alert-danger">
                                 {{ errors.server }}
                             </div>
@@ -290,22 +311,14 @@ export default {
 
                             <div class="form-group mb-3">
                                 <label for="name">Nome</label>
-                                <input
-                                    type="text"
-                                    v-model="form.name"
-                                    class="form-control"
-                                    id="name"
+                                <input type="text" v-model="form.name" class="form-control" id="name"
                                     placeholder="Inserisci il tuo nome" />
                                 <div v-if="errors.name" class="text-danger">{{ errors.name }}</div>
                             </div>
 
                             <div class="form-group mb-3">
                                 <label for="surname">Cognome</label>
-                                <input
-                                    type="text"
-                                    v-model="form.surname"
-                                    class="form-control"
-                                    id="surname"
+                                <input type="text" v-model="form.surname" class="form-control" id="surname"
                                     placeholder="Inserisci il tuo cognome" />
                                 <div v-if="errors.surname" class="text-danger">
                                     {{ errors.surname }}
@@ -314,11 +327,7 @@ export default {
 
                             <div class="form-group mb-3">
                                 <label for="email">Email</label>
-                                <input
-                                    type="email"
-                                    v-model="form.email"
-                                    class="form-control"
-                                    id="email"
+                                <input type="email" v-model="form.email" class="form-control" id="email"
                                     placeholder="Inserisci la tua email" />
                                 <div v-if="errors.email" class="text-danger">
                                     {{ errors.email }}
@@ -327,11 +336,7 @@ export default {
 
                             <div class="form-group mb-3">
                                 <label for="object">Oggetto</label>
-                                <input
-                                    type="text"
-                                    v-model="form.object"
-                                    class="form-control"
-                                    id="object"
+                                <input type="text" v-model="form.object" class="form-control" id="object"
                                     placeholder="Oggetto del messaggio" />
                                 <div v-if="errors.object" class="text-danger">
                                     {{ errors.object }}
@@ -340,10 +345,7 @@ export default {
 
                             <div class="form-group mb-3">
                                 <label for="message">Messaggio</label>
-                                <textarea
-                                    v-model="form.message"
-                                    class="form-control"
-                                    id="message"
+                                <textarea v-model="form.message" class="form-control" id="message"
                                     placeholder="Inserisci il tuo messaggio"></textarea>
                                 <div v-if="errors.message" class="text-danger">
                                     {{ errors.message }}
@@ -359,32 +361,22 @@ export default {
                                 <i class="fas fa-arrow-left me-2"></i>Indietro
                             </button>
                         </div>
-                        <div
-                            v-if="
-                                store.myApartments.some(
-                                    (item) => item.id === store.currentApartment.id
-                                )
-                            ">
+                        <div v-if="
+                            store.myApartments.some(
+                                (item) => item.id === store.currentApartment.id
+                            )
+                        ">
                             <router-link :to="'/edit-apartment'">
                                 <button class="btn btn-warning border-0 me-2">Modifica</button>
                             </router-link>
-                            <button
-                                type="button"
-                                class="btn btn-danger"
-                                data-bs-toggle="modal"
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal"
                                 data-bs-target="#staticBackdrop">
                                 Elimina
                             </button>
 
                             <!-- Modal -->
-                            <div
-                                v-if="showModal"
-                                class="modal fade"
-                                id="staticBackdrop"
-                                data-bs-backdrop="static"
-                                data-bs-keyboard="false"
-                                tabindex="-1"
-                                aria-labelledby="staticBackdropLabel"
+                            <div v-if="showModal" class="modal fade" id="staticBackdrop" data-bs-backdrop="static"
+                                data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
                                 aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content">
@@ -392,24 +384,15 @@ export default {
                                             <h1 class="modal-title fs-5" id="staticBackdropLabel">
                                                 Sei sicuro di voler eliminare l'appartamento?
                                             </h1>
-                                            <button
-                                                type="button"
-                                                class="btn-close"
-                                                data-bs-dismiss="modal"
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
 
                                         <div class="modal-footer">
-                                            <button
-                                                type="button"
-                                                class="btn btn-secondary"
-                                                data-bs-dismiss="modal">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                                 Close
                                             </button>
-                                            <button
-                                                type="button"
-                                                class="btn btn-danger"
-                                                @click="deleteApartment">
+                                            <button type="button" class="btn btn-danger" @click="deleteApartment">
                                                 Elimina
                                             </button>
                                         </div>
