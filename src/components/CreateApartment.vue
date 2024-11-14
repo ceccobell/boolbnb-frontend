@@ -97,6 +97,7 @@ export default {
                     console.log("Apartment created:", response.data)
                     this.errors = {}
                     this.$router.push("/myapartments")
+                    location.reload()
                 })
                 .catch((error) => {
                     if (error.response && error.response.data.errors) {

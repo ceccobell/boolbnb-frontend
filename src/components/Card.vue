@@ -1,6 +1,6 @@
 <template>
     <div class="content">
-        <div class="card border-0" @click="goToApartmentDetails(apartment)">
+        <div class="card border-0">
             <img
                 v-if="apartment.images.length > 0 && apartment.images[0].url"
                 :src="apartment.images[0].url"
@@ -16,10 +16,10 @@
                     {{ apartment.title }} <span class="city">{{ apartment.city }}</span>
                 </h2>
                 <p>{{ apartment.description }}</p>
-                <a href="#" class="button">
+                <button class="button" @click="goToApartmentDetails(apartment)">
                     Scopri
                     <span class="material-symbols-outlined"> &rarr; </span>
-                </a>
+                </button>
             </div>
             <button
                 v-if="showSponsorButton"
@@ -28,14 +28,12 @@
                 @click="sponsor(apartment)"
                 data-bs-toggle="modal"
                 data-bs-target="#staticBackdrop">
-                <span class="btn btn-warning" v-if="apartment.packages.length == 0">
+                <span class="btn btn-warning" v-if="apartment.latest_package == null">
                     <i class="fa-solid fa-crown"></i> Sponsor
                 </span>
-                <span
-                    class="btn btn-danger"
-                    v-if="apartment.packages && apartment.packages.length > 0">
+                <span class="btn btn-danger" v-if="apartment.latest_package">
                     <i class="fa-solid fa-business-time"></i>
-                    {{ apartment.packages[0].pivot.sponsorship_end }}
+                    {{ apartment.latest_package.pivot.sponsorship_end }}
                 </span>
             </button>
         </div>
@@ -53,6 +51,11 @@ export default {
         return {
             store,
         }
+    },
+    computed: {
+        formattedSponsorshipEnd() {
+            return this.apartment.latest_package?.pivot?.sponsorship_end.split(" ")[0]
+        },
     },
 
     methods: {
@@ -135,7 +138,7 @@ export default {
     }
 
     p,
-    a {
+    .button {
         position: absolute;
         opacity: 0;
         max-width: 80%;
@@ -146,10 +149,15 @@ export default {
         inset: auto auto 80px 30px;
     }
 
-    a {
+    .button {
         inset: auto auto 40px 30px;
         color: inherit;
         text-decoration: none;
+
+        &:hover {
+            color: rgb(10, 135, 237);
+            text-decoration: underline;
+        }
     }
 
     &:hover h2 {
@@ -158,7 +166,7 @@ export default {
     }
 
     &:hover p,
-    &:hover a {
+    &:hover .button {
         opacity: 1;
         transition: opacity 0.5s 0.1s ease-in;
     }

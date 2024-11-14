@@ -1,37 +1,43 @@
 <script>
-import { store } from "../store";
-import axios from "axios";
+import { store } from "../store"
+import axios from "axios"
 
 export default {
     data() {
         return {
             store,
-        };
+        }
     },
     computed: {
         apartmentToSponsor() {
-            return store.apartmentToSponsor;
+            return store.apartmentToSponsor
         },
         selectedPlanDetails() {
-            return this.store.sponsorPackages.find(plan => plan.id === this.store.selectedPlan?.id) || {};
+            return (
+                this.store.sponsorPackages.find(
+                    (plan) => plan.id === this.store.selectedPlan?.id
+                ) || {}
+            )
         },
     },
     methods: {
         openModal() {
-            this.resetSelectedPlan();
+            this.resetSelectedPlan()
         },
         resetSelectedPlan() {
-            store.selectedPlan = { id: null };
+            store.selectedPlan = { id: null }
         },
         onPlanChange(event) {
-            const selectedPlanId = parseInt(event.target.value);
-            const selectedPlan = this.store.sponsorPackages.find(plan => plan.id === selectedPlanId);
-            this.store.selectedPlan = selectedPlan || { id: null };
+            const selectedPlanId = parseInt(event.target.value)
+            const selectedPlan = this.store.sponsorPackages.find(
+                (plan) => plan.id === selectedPlanId
+            )
+            this.store.selectedPlan = selectedPlan || { id: null }
         },
         sponsorApartment() {
             if (!store.selectedPlan || !store.selectedPlan.id) {
-                console.error("Nessun piano selezionato. Seleziona un piano prima di procedere.");
-                return;
+                console.error("Nessun piano selezionato. Seleziona un piano prima di procedere.")
+                return
             }
             axios
                 .post("http://127.0.0.1:8000/api/sponsor-apartment", {
@@ -39,18 +45,16 @@ export default {
                     package_id: store.selectedPlan.id,
                 })
                 .then((response) => {
-                    console.log("Hai sponsorizzato l'appartamento:", store.apartmentToSponsor);
+                    location.reload()
+                    console.log("Hai sponsorizzato l'appartamento:", store.apartmentToSponsor)
                 })
                 .catch((error) => {
-                    console.error("Errore nella sponsor:", error);
-                });
+                    console.error("Errore nella sponsor:", error)
+                })
         },
     },
-};
+}
 </script>
-
-
-
 
 <template>
     <div
@@ -79,7 +83,9 @@ export default {
                         <div class="row mb-2">
                             <div
                                 class="col-4"
-                                v-if="apartmentToSponsor.images && apartmentToSponsor.images[0].url">
+                                v-if="
+                                    apartmentToSponsor.images && apartmentToSponsor.images[0].url
+                                ">
                                 <img
                                     :src="apartmentToSponsor.images[0].url"
                                     class="card-img-top"
@@ -94,7 +100,9 @@ export default {
                         <!-- Dropdown di selezione del piano -->
                         <div class="row mb-3">
                             <div class="col">
-                                <label for="planSelect">Seleziona il Piano di Sponsorizzazione</label>
+                                <label for="planSelect"
+                                    >Seleziona il Piano di Sponsorizzazione</label
+                                >
                                 <select
                                     id="planSelect"
                                     class="form-select"
@@ -122,14 +130,12 @@ export default {
     </div>
 </template>
 
-
-
-
 <style scoped>
 .modal {
     --bs-modal-width: 80% !important;
     margin: 0 auto;
     z-index: 3243;
+    margin-top: 120px;
 }
 
 .btn {
@@ -137,6 +143,3 @@ export default {
     color: white;
 }
 </style>
-
-
-
