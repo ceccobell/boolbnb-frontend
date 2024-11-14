@@ -85,29 +85,85 @@ export default {
                     <img src="/boolbnb_logo.png" alt="logo" class="logo" />
                 </a>
                 <div class="" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item" v-for="(item, index) in itemsNavbar" :key="index">
+                    <ul class="navbar-nav d-flex me-auto mb-2 mb-lg-0">
+                        <li
+                            class="nav-item default-menu"
+                            v-for="(item, index) in itemsNavbar"
+                            :key="index">
                             <a
-                                class="nav-link"
+                                class="nav-link position-relative"
                                 :class="item.active ? 'active' : ''"
                                 aria-current="page"
                                 :href="item.url"
                                 @click="selectItem(item)"
-                                >{{ item.nome }}</a
+                                >{{ item.nome
+                                }}<span
+                                    v-show="item.nome === 'Miei Appartamenti'"
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {{ store.messagesCounter }}
+                                </span></a
                             >
                         </li>
-                        <li>
+
+                        <!-- Dropdown menu with Vuetify components -->
+                        <li class="nav-item hamburger-menu">
+                            <div class="text-center">
+                                <v-menu open-on-hover>
+                                    <template v-slot:activator="{ props }">
+                                        <v-btn color="#ef6a9d" v-bind="props">
+                                            <i class="fa-solid fa-bars"></i>
+                                        </v-btn>
+                                    </template>
+
+                                    <v-list>
+                                        <v-list-item v-for="(item, index) in items" :key="index">
+                                            <v-list-item-title
+                                                ><router-link
+                                                    :to="item.url"
+                                                    class="text-decoration-none text-black position-relative"
+                                                    >{{ item.title
+                                                    }}<span
+                                                        v-show="item.nome === 'Miei Appartamenti'"
+                                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                                        {{ store.messagesCounter }}
+                                                    </span></router-link
+                                                ></v-list-item-title
+                                            >
+                                        </v-list-item>
+                                        <v-list-item>
+                                            <v-list-item>
+                                                <a
+                                                    v-show="!store.isAuthenticated"
+                                                    href="#"
+                                                    class="btn btn-accedi"
+                                                    @click="isAuthFormVisible = true"
+                                                    ><i class="fa-solid fa-user"></i> Accedi</a
+                                                >
+                                                <a
+                                                    v-show="store.isAuthenticated"
+                                                    href="#"
+                                                    class="btn btn-accedi"
+                                                    @click="logout"
+                                                    ><i class="fa-solid fa-user"></i> Esci</a
+                                                >
+                                            </v-list-item>
+                                        </v-list-item>
+                                    </v-list>
+                                </v-menu>
+                            </div>
+                        </li>
+                        <li class="nav-item log-in">
                             <a
                                 v-show="!store.isAuthenticated"
                                 href="#"
-                                class="btn btn-accedi"
+                                class="btn btn-accedi ms-4"
                                 @click="isAuthFormVisible = true"
                                 ><i class="fa-solid fa-user"></i> Accedi</a
                             >
                             <a
                                 v-show="store.isAuthenticated"
                                 href="#"
-                                class="btn btn-accedi"
+                                class="btn btn-accedi ms-4"
                                 @click="logout"
                                 ><i class="fa-solid fa-user"></i> Esci</a
                             >
@@ -132,7 +188,7 @@ header nav {
     width: 100%;
     position: fixed;
     top: 0;
-    z-index: 99999999999;
+    z-index: 1;
 }
 
 .logo {
