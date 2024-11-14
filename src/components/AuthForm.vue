@@ -69,6 +69,7 @@ export default {
                     localStorage.setItem("authToken", response.data.token)
                     store.isAuthenticated = true
                     this.closeCanvas()
+                    location.reload()
                 })
                 .catch((error) => {
                     if (error.response) {

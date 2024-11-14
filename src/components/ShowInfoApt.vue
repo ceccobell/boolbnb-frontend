@@ -136,6 +136,22 @@ export default {
             const formattedAddress = address.replace(/\s+/g, "+")
             this.mapUrl = `https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=${formattedAddress}`
         },
+        messageSeen(index) {
+            console.log("ID messaggio:", store.currentApartment.unreadMessages[index].id)
+            store.currentApartment.readMessages.push(store.currentApartment.unreadMessages[index])
+            store.currentApartment.unreadMessages.splice(index, 1)
+
+            axios
+                .post(
+                    `http://127.0.0.1:8000/api/messages/${store.currentApartment.unreadMessages[index].id}/read`
+                )
+                .then((response) => {
+                    console.log(response.data.message)
+                })
+                .catch((error) => {
+                    console.error("Errore", error)
+                })
+        },
     },
     mounted() {
         if (this.store.currentApartment) {
@@ -275,14 +291,61 @@ export default {
                         class="bg-light p-4 rounded mt-4 col-12">
                         <div
                             v-if="
-                                store.currentApartment.messages &&
-                                store.currentApartment.messages.length > 0
+                                store.currentApartment.unreadMessages &&
+                                store.currentApartment.unreadMessages.length > 0
                             "
                             class="mt-3">
-                            <h3 class="h5">Messaggi Ricevuti</h3>
+                            <h3 class="h5">Messaggi da leggere</h3>
                             <ul class="list-unstyled">
                                 <li
-                                    v-for="(message, index) in store.currentApartment.messages"
+                                    v-for="(message, index) in store.currentApartment
+                                        .unreadMessages"
+                                    :key="index"
+                                    class="message-item">
+                                    <div>
+                                        <strong>Inviato da: </strong>
+                                        <a
+                                            @click="messageSeen(index)"
+                                            data-bs-toggle="collapse"
+                                            :href="'#messageDetails' + index"
+                                            role="button"
+                                            aria-expanded="false"
+                                            aria-controls="'messageDetails' + index">
+                                            {{ message.sender_email }}
+                                        </a>
+                                    </div>
+                                    <div :id="'messageDetails' + index" class="collapse mt-2">
+                                        <div>
+                                            <strong>Nome e cognome:</strong>
+                                            {{ message.sender_name }} {{ message.sender_surname }}
+                                        </div>
+                                        <div>
+                                            <strong>Oggetto:</strong>
+                                            {{ message.sender_message_object }}
+                                        </div>
+                                        <div>
+                                            <strong>Messaggio:</strong>
+                                            {{ message.sender_message_text }}
+                                        </div>
+                                    </div>
+
+                                    <hr />
+                                </li>
+                            </ul>
+                        </div>
+                        <div v-else>
+                            <h5>Non hai ricevuto nessun messaggio.</h5>
+                        </div>
+                        <div
+                            v-if="
+                                store.currentApartment.readMessages &&
+                                store.currentApartment.readMessages.length > 0
+                            "
+                            class="mt-3">
+                            <h3 class="h5">Messaggi già letti</h3>
+                            <ul class="list-unstyled">
+                                <li
+                                    v-for="(message, index) in store.currentApartment.readMessages"
                                     :key="index"
                                     class="message-item">
                                     <div>
@@ -314,9 +377,6 @@ export default {
                                     <hr />
                                 </li>
                             </ul>
-                        </div>
-                        <div v-else>
-                            <h5>Non hai ricevuto nessun messaggio.</h5>
                         </div>
                     </div>
 

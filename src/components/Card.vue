@@ -7,9 +7,9 @@
                 class="card-img-top"
                 alt="Property Image" />
             <span
-                v-if="apartment.messages && apartment.messages.length > 0"
+                v-if="apartment.unreadMessages && apartment.unreadMessages.length > 0"
                 class="position-absolute top-50 start-50 translate-middle badge rounded-pill bg-danger">
-                {{ apartment.messages.length }}
+                {{ apartment.unreadMessages.length }}
             </span>
             <div class="card-content">
                 <h2>

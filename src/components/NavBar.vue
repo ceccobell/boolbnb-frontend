@@ -56,8 +56,10 @@ export default {
                     }
                 )
                 .then(() => {
+                    this.$router.push("/")
                     localStorage.removeItem("authToken")
                     store.isAuthenticated = false
+                    location.reload()
                     this.$emit("close-modal", false)
                 })
                 .catch((error) => {
@@ -90,18 +92,19 @@ export default {
                             class="nav-item default-menu"
                             v-for="(item, index) in itemsNavbar"
                             :key="index">
-                            <a
+                            <router-link
+                                v-if="item.nome !== 'Miei Appartamenti' || store.isAuthenticated"
                                 class="nav-link position-relative"
                                 :class="item.active ? 'active' : ''"
                                 aria-current="page"
-                                :href="item.url"
+                                :to="item.url"
                                 @click="selectItem(item)"
                                 >{{ item.nome
                                 }}<span
                                     v-show="item.nome === 'Miei Appartamenti'"
                                     class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                                     {{ store.messagesCounter }}
-                                </span></a
+                                </span></router-link
                             >
                         </li>
 
@@ -119,6 +122,10 @@ export default {
                                         <v-list-item v-for="(item, index) in items" :key="index">
                                             <v-list-item-title
                                                 ><router-link
+                                                    v-if="
+                                                        item.nome !== 'Miei Appartamenti' ||
+                                                        store.isAuthenticated
+                                                    "
                                                     :to="item.url"
                                                     class="text-decoration-none text-black position-relative"
                                                     >{{ item.title

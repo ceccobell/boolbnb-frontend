@@ -59,7 +59,8 @@ export default {
                     .then((response) => {
                         store.myApartments = response.data.apartments
                         store.myApartments.forEach((apartment) => {
-                            apartment.messages = []
+                            apartment.unreadMessages = []
+                            apartment.readMessages = []
                             this.getMessages(apartment)
                         })
                     })
@@ -72,8 +73,9 @@ export default {
             axios
                 .get(`http://127.0.0.1:8000/api/apartments/${apartment.id}/messages`)
                 .then((response) => {
-                    apartment.messages = response.data.message
-                    store.messagesCounter += apartment.messages.length
+                    apartment.unreadMessages = response.data.unreadMessages
+                    apartment.readMessages = response.data.readMessages
+                    store.messagesCounter += apartment.unreadMessages.length
                     console.log("Messaggi recuperati:", response.data.message)
                 })
                 .catch((error) => {
