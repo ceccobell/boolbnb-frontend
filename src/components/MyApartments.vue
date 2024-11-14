@@ -44,7 +44,7 @@ export default {
     <main>
         <div class="container">
             <div class="row">
-                <div class="col-4" v-for="(myApartment, index) in myApartments" :key="index">
+                <div class="col-lg-4 col-md-6 col-sm-12" v-for="(myApartment, index) in myApartments" :key="index">
                     <Card :apartment="myApartment" :showSponsorButton="true" />
                 </div>
             </div>

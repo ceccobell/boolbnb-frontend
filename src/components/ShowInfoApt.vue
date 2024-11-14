@@ -174,7 +174,7 @@ export default {
                 </div>
 
                 <div class="card-body d-flex flex-wrap">
-                    <div class="col-6">
+                    <div class="col-lg-6 col-sm-12 col-12">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h2 class="h4 font-weight-bold text-dark">{{ store.currentApartment.title }}</h2>
                         </div>
@@ -233,7 +233,7 @@ export default {
                         </div>
                     </div>
 
-                    <div class="mb-4 col-6">
+                    <div class="mb-4 col-lg-6 col-sm-12 col-12">
                         <h3 class="h5">Dove sarai</h3>
                         <div id="map" class="tomtom-map"></div>
                     </div>

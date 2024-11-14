@@ -82,8 +82,8 @@ export default {
 
 .card {
     position: relative;
-    width: 24rem;
-    height: 36rem;
+    width: 20rem;
+    height: 30rem;
     border-radius: 10px;
     overflow: hidden;
     cursor: pointer;

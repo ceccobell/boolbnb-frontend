@@ -53,9 +53,11 @@ export default {
     </div>
 
     <!-- Sezione appartamenti filtrati -->
-    <div class="container">
-        <div class="row">
-            <div class="col-4" v-for="(apartment, index) in apartments_filtered" :key="index">
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <h1 class="text-center mt-3">Appartamenti Disponibili</h1>
+            <div class="col-xxl-3 col-lg-4 col-md-6 col-sm-12" v-for="(apartment, index) in apartments_filtered"
+                :key="index">
                 <Card :apartment="apartment" :showSponsorButton="false" />
             </div>
         </div>
