@@ -4,8 +4,7 @@
             <img v-if="apartment.images.length > 0 && apartment.images[0].url" :src="apartment.images[0].url"
                 class="card-img-top" alt="Property Image" />
             <div class="card-content">
-                <h2>{{ apartment.title }}</h2>
-                <span>{{ apartment.city }}</span>
+                <h2>{{ apartment.title }} <span class="city">{{ apartment.city }}</span></h2>
                 <p>{{ apartment.description }}</p>
                 <a href="#" class="button">
                     Scopri
@@ -157,5 +156,10 @@ export default {
 .btn {
     background-color: #ec622b;
     color: white;
+}
+
+.city {
+    text-transform: lowercas;
+    font-size: 15px;
 }
 </style>
