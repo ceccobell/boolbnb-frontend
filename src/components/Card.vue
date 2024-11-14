@@ -1,10 +1,7 @@
 <template>
     <div class="card" @click="goToApartmentDetails(apartment)">
-        <img
-            v-if="apartment.images.length > 0 && apartment.images[0].url"
-            :src="apartment.images[0].url"
-            class="card-img-top"
-            alt="Property Image" />
+        <img v-if="apartment.images.length > 0 && apartment.images[0].url" :src="apartment.images[0].url"
+            class="card-img-top" alt="Property Image" />
         <div class="card-body">
             <h5 class="card-title">{{ apartment.title }}</h5>
             <p class="card-text">{{ apartment.description }}</p>
@@ -13,13 +10,8 @@
                 <li><strong>Beds:</strong> {{ apartment.n_beds }}</li>
             </ul>
         </div>
-        <button
-            v-if="showSponsorButton"
-            type="button"
-            class="btn position-absolute top-0 end-0 m-2 sponsor"
-            @click="sponsor(apartment)"
-            data-bs-toggle="modal"
-            data-bs-target="#staticBackdrop">
+        <button v-if="showSponsorButton" type="button" class="btn position-absolute top-0 end-0 m-2"
+            @click="sponsor(apartment)" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
             <i class="fa-solid fa-crown"></i> Sponsor
         </button>
     </div>
@@ -55,23 +47,119 @@ export default {
 </script>
 
 <style scoped>
-.card {
+/* .card {
     margin: 15px;
     cursor: pointer;
     transition: transform 0.3s ease;
-}
+} */
 
 .card:hover {
     transform: scale(1.05);
+    transition: transform 0.5s ease-out;
+
+    img {
+        filter: brightness(60%);
+        opacity: 0.9;
+    }
 }
 
-.card-img-top {
-    height: 200px;
+/* .card-img-top {
+    height: 300px;
     object-fit: cover;
+    border-radius: 8px;
+} */
+
+
+.content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 50px;
+    font-family: 'Roboto', sans-serif;
 }
+
+.card {
+    position: relative;
+    width: 20rem;
+    height: 30rem;
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    color: rgb(240, 240, 240);
+    box-shadow: 0 10px 30px 5px rgba(0, 0, 0, 0.2);
+
+    img {
+        position: absolute;
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0.9;
+        transition: opacity 0.2s ease-out, filter 0.5s ease-in;
+    }
+
+    h2 {
+        position: absolute;
+        inset: auto auto 30px 30px;
+        margin: 0;
+        transition: inset .3s .3s ease-out;
+        font-family: 'Roboto Condensed', sans-serif;
+        font-weight: normal;
+        text-transform: uppercase;
+    }
+
+    p,
+    a {
+        position: absolute;
+        opacity: 0;
+        max-width: 80%;
+        transition: opacity .3s ease-out;
+    }
+
+    p {
+        inset: auto auto 80px 30px;
+    }
+
+    a {
+        inset: auto auto 40px 30px;
+        color: inherit;
+        text-decoration: none;
+    }
+
+    &:hover h2 {
+        inset: auto auto 220px 30px;
+        transition: inset .3s ease-out;
+    }
+
+    &:hover p,
+    &:hover a {
+        opacity: 1;
+        transition: opacity .5s .1s ease-in;
+    }
+
+    &:hover img {
+        transition: opacity .3s ease-in;
+        opacity: 1;
+    }
+
+}
+
+.material-symbols-outlined {
+    vertical-align: middle;
+}
+
+
+
 
 .sponsor {
     background-color: #ec622b;
     color: white;
+}
+
+.city {
+    text-transform: lowercas;
+    font-size: 15px;
 }
 </style>
