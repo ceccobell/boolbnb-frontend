@@ -23,6 +23,13 @@ export default {
     <main>
         <div class="container">
             <div class="row">
+                <div class="col-12 mt-4">
+                    <router-link to="/create-apartment"
+                        ><button class="btn btn-primary">
+                            Aggiungi un Appartamento
+                        </button></router-link
+                    >
+                </div>
                 <div
                     class="col-xxl-3 col-lg-4 col-md-6 col-sm-12"
                     v-for="(myApartment, index) in store.myApartments"

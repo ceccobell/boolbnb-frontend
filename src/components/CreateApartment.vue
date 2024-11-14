@@ -262,7 +262,7 @@ export default {
                         </div>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-success">Crea Appartamento</button>
+                <button type="submit" class="btn btn-success text-white">Crea Appartamento</button>
             </form>
         </div>
     </main>
@@ -270,7 +270,7 @@ export default {
 
 <style scoped>
 main {
-    margin-top: 90px;
+    margin-top: 120px;
 }
 ul {
     list-style-type: none;

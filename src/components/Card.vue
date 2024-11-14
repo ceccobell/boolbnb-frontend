@@ -8,7 +8,7 @@
                 alt="Property Image" />
             <span
                 v-if="apartment.messages && apartment.messages.length > 0"
-                class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-danger">
+                class="position-absolute top-50 start-50 translate-middle badge rounded-pill bg-danger">
                 {{ apartment.messages.length }}
             </span>
             <div class="card-content">
@@ -24,11 +24,19 @@
             <button
                 v-if="showSponsorButton"
                 type="button"
-                class="btn btn-primary position-absolute top-0 end-0 m-2"
+                class="position-absolute top-0 end-0 m-2"
                 @click="sponsor(apartment)"
                 data-bs-toggle="modal"
                 data-bs-target="#staticBackdrop">
-                <i class="fa-solid fa-crown"></i> Sponsor
+                <span class="btn btn-warning" v-if="apartment.packages.length == 0">
+                    <i class="fa-solid fa-crown"></i> Sponsor
+                </span>
+                <span
+                    class="btn btn-danger"
+                    v-if="apartment.packages && apartment.packages.length > 0">
+                    <i class="fa-solid fa-business-time"></i>
+                    {{ apartment.packages[0].pivot.sponsorship_end }}
+                </span>
             </button>
         </div>
     </div>

@@ -188,7 +188,7 @@ header nav {
     width: 100%;
     position: fixed;
     top: 0;
-    z-index: 1;
+    z-index: 10000000;
 }
 
 .logo {

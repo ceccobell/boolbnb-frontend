@@ -46,8 +46,7 @@ export default {
                 })
                 .then((response) => {
                     console.log("Appartamento eliminato", response.data)
-                    this.showModal = false
-                    this.$router.push("/myapartments")
+                    location.reload()
                 })
                 .catch((error) => {
                     console.error("Errore nell'eliminazione", error)
@@ -274,8 +273,13 @@ export default {
                             store.myApartments.some((item) => item.id === store.currentApartment.id)
                         "
                         class="bg-light p-4 rounded mt-4 col-12">
-                        <h3 class="h5">Messaggi Ricevuti</h3>
-                        <div v-if="store.currentApartment.messages.length > 0" class="mt-3">
+                        <div
+                            v-if="
+                                store.currentApartment.messages &&
+                                store.currentApartment.messages.length > 0
+                            "
+                            class="mt-3">
+                            <h3 class="h5">Messaggi Ricevuti</h3>
                             <ul class="list-unstyled">
                                 <li
                                     v-for="(message, index) in store.currentApartment.messages"
@@ -312,7 +316,7 @@ export default {
                             </ul>
                         </div>
                         <div v-else>
-                            <p>Non hai ricevuto nessun messaggio.</p>
+                            <h5>Non hai ricevuto nessun messaggio.</h5>
                         </div>
                     </div>
 
@@ -399,7 +403,7 @@ export default {
                             <button type="submit" class="btn btn-primary">Invia Messaggio</button>
                         </form>
                     </div>
-                    <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-between mt-2">
                         <div>
                             <button @click="goBack" class="btn btn-secondary mb-3 me-2">
                                 <i class="fas fa-arrow-left me-2"></i>Indietro
@@ -412,11 +416,13 @@ export default {
                                 )
                             ">
                             <router-link :to="'/edit-apartment'">
-                                <button class="btn btn-warning border-0 me-2">Modifica</button>
+                                <button class="btn btn-warning border-0 me-2 text-white">
+                                    Modifica
+                                </button>
                             </router-link>
                             <button
                                 type="button"
-                                class="btn btn-danger"
+                                class="btn btn-danger text-white"
                                 data-bs-toggle="modal"
                                 data-bs-target="#staticBackdrop">
                                 Elimina
@@ -448,13 +454,13 @@ export default {
                                         <div class="modal-footer">
                                             <button
                                                 type="button"
-                                                class="btn btn-secondary"
+                                                class="btn btn-secondary text-white"
                                                 data-bs-dismiss="modal">
                                                 Close
                                             </button>
                                             <button
                                                 type="button"
-                                                class="btn btn-danger"
+                                                class="btn btn-danger text-white"
                                                 @click="deleteApartment">
                                                 Elimina
                                             </button>
@@ -472,7 +478,7 @@ export default {
 
 <style scoped>
 main {
-    padding-top: 120px;
+    margin-top: 120px;
 }
 
 .tomtom-map {

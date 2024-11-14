@@ -290,7 +290,9 @@ export default {
                         </div>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-success">Aggiorna Appartamento</button>
+                <button type="submit" class="btn btn-success text-white">
+                    Aggiorna Appartamento
+                </button>
             </form>
         </div>
     </main>
@@ -298,8 +300,9 @@ export default {
 
 <style scoped>
 main {
-    margin-top: 90px;
+    margin-top: 120px;
 }
+
 ul {
     list-style-type: none;
     cursor: pointer;
