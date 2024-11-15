@@ -309,7 +309,7 @@ export default {
                         v-if="
                             store.myApartments.some((item) => item.id === store.currentApartment.id)
                         "
-                        class="bg-light p-4 rounded mt-4 col-6">
+                        class="bg-light p-4 rounded mt-4 col-12 col-md-6">
                         <div
                             v-if="
                                 store.currentApartment.unreadMessages &&
