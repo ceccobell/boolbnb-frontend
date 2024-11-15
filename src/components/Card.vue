@@ -1,16 +1,16 @@
 <template>
     <div class="content">
+        <span
+            v-if="apartment.unreadMessages && apartment.unreadMessages.length > 0"
+            class="badge rounded-pill bg-danger">
+            {{ apartment.unreadMessages.length }}
+        </span>
         <div class="card border-0">
             <img
                 v-if="apartment.images.length > 0 && apartment.images[0].url"
                 :src="apartment.images[0].url"
                 class="card-img-top"
                 alt="Property Image" />
-            <span
-                v-if="apartment.unreadMessages && apartment.unreadMessages.length > 0"
-                class="position-absolute top-50 start-50 translate-middle badge rounded-pill bg-danger">
-                {{ apartment.unreadMessages.length }}
-            </span>
             <div class="card-content">
                 <h2>
                     {{ apartment.title }} <span class="city">{{ apartment.city }}</span>
@@ -156,6 +156,7 @@ export default {
 } */
 
 .content {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -246,7 +247,14 @@ export default {
 }
 
 .city {
-    text-transform: lowercas;
+    text-transform: lowercase;
     font-size: 15px;
+}
+
+.badge {
+    position: absolute;
+    top: 40px;
+    left: 10px;
+    z-index: 10;
 }
 </style>
