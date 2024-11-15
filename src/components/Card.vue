@@ -16,7 +16,7 @@
                     {{ apartment.title }} <span class="city">{{ apartment.city }}</span>
                 </h2>
                 <p>{{ apartment.description }}</p>
-                <button class="button" @click="goToApartmentDetails(apartment)">
+                <button class="button button-details px-2 py-1" @click="goToApartmentDetails(apartment)">
                     Scopri
                     <span class="material-symbols-outlined"> &rarr; </span>
                 </button>
@@ -149,14 +149,14 @@ export default {
         inset: auto auto 80px 30px;
     }
 
-    .button {
+    .button-details {
         inset: auto auto 40px 30px;
-        color: inherit;
         text-decoration: none;
-
+        border: 1px solid black;
+        background-color: #ec622b;
         &:hover {
-            color: rgb(10, 135, 237);
-            text-decoration: underline;
+            background-color: #ff8858;
+            color: black;
         }
     }
 
