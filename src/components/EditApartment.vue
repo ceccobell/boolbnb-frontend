@@ -65,8 +65,46 @@ export default {
                 this.form.services_filtered.splice(index, 1)
             }
         },
+        validateForm() {
+            this.errors = {}
+            let isValid = true
+
+            // Validazione dei campi obbligatori
+            if (!this.form.title) {
+                this.errors.title = "Il titolo è obbligatorio."
+                isValid = false
+            } else if (this.form.title.length > 255) {
+                this.errors.title = "Il titolo non può superare i 255 caratteri."
+                isValid = false
+            }
+
+            if (!this.form.property) {
+                this.errors.property = "La proprietà è obbligatoria."
+                isValid = false
+            }
+
+            if (!this.form.address) {
+                this.errors.address = "L'indirizzo è obbligatorio."
+                isValid = false
+            }
+
+            if (!this.form.description) {
+                this.errors.description = "La descrizione è obbligatoria."
+                isValid = false
+            }
+
+            // Validazione dei servizi
+            if (!this.form.services || this.form.services.length < 1) {
+                this.errors.services = "Devi selezionare almeno un servizio."
+                isValid = false
+            }
+
+            return isValid
+        },
         editApartment() {
-            console.log("Form Data:", this.form)
+            if (!this.validateForm()) {
+                return // Se la validazione fallisce, non inviare il form
+            }
             const formData = new FormData()
             formData.append("title", this.form.title)
             formData.append("property", this.form.property)
@@ -148,7 +186,7 @@ export default {
                         >
                         <input type="text" name="title" class="form-control" v-model="form.title" />
                         <div v-if="errors.title" class="invalid-feedback">
-                            {{ errors.title[0] }}
+                            {{ errors.title }}
                         </div>
                     </div>
                     <div class="mb-3 col-6">
@@ -161,7 +199,7 @@ export default {
                             class="form-control"
                             v-model="form.property" />
                         <div v-if="errors.property" class="invalid-feedback">
-                            {{ errors.property[0] }}
+                            {{ errors.property }}
                         </div>
                     </div>
                     <div class="mb-3 col-12 position-relative">
@@ -175,7 +213,7 @@ export default {
                             v-model="form.address"
                             @input="searchAddress" />
                         <div v-if="errors.address" class="invalid-feedback">
-                            {{ errors.address[0] }}
+                            {{ errors.address }}
                         </div>
                         <ul v-if="results.length">
                             <li
@@ -193,7 +231,7 @@ export default {
                             class="form-control"
                             v-model="form.description"></textarea>
                         <div v-if="errors.description" class="invalid-feedback">
-                            {{ errors.description[0] }}
+                            {{ errors.description }}
                         </div>
                     </div>
                     <div class="mb-3 col-3">
@@ -255,9 +293,9 @@ export default {
                             type="file"
                             name="main_image"
                             class="form-control"
-                            @change="form.main_image = $event.target.files[0]" />
+                            @change="form.main_image = $event.target.files" />
                         <div v-if="errors.main_image" class="invalid-feedback">
-                            {{ errors.main_image[0] }}
+                            {{ errors.main_image }}
                         </div>
                     </div>
                     <div class="mb-3 col-4">
@@ -271,7 +309,7 @@ export default {
                     </div>
 
                     <div v-if="errors.services" class="invalid-feedback mb-1">
-                        {{ errors.services[0] }}
+                        {{ errors.services }}
                     </div>
                     <div
                         class="mb-2 col-3"
