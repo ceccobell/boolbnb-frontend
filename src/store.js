@@ -12,4 +12,6 @@ export const store = reactive({
     filteredApartments: [],
     services: [],
     messagesCounter: 0,
+    apartmentToEdit: {},
+    viewCounts: {},
 })
