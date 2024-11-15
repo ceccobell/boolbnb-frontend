@@ -8,6 +8,18 @@
     background-color: #ef6a9d !important;
 }
 
+.bg-orange {
+    background-color: #ec622b !important;
+}
+
+.bg.light-orange {
+    background-color: #fff7ed !important;
+}
+
+.text-orange {
+    color: #ec622b;
+}
+
 .overlay {
     position: fixed;
     top: 0;

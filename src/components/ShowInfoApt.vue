@@ -26,6 +26,7 @@ export default {
             apartmentAddress: "",
             mapUrl: "",
             showModal: true,
+            openMessageIndex: null,
         }
     },
     watch: {
@@ -137,10 +138,8 @@ export default {
             this.mapUrl = `https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=${formattedAddress}`
         },
         messageSeen(index) {
+            console.log("Index:", index)
             console.log("ID messaggio:", store.currentApartment.unreadMessages[index].id)
-            store.currentApartment.readMessages.push(store.currentApartment.unreadMessages[index])
-            store.currentApartment.unreadMessages.splice(index, 1)
-
             axios
                 .post(
                     `http://127.0.0.1:8000/api/messages/${store.currentApartment.unreadMessages[index].id}/read`
@@ -151,6 +150,28 @@ export default {
                 .catch((error) => {
                     console.error("Errore", error)
                 })
+            store.currentApartment.readMessages.unshift(
+                store.currentApartment.unreadMessages[index]
+            )
+            store.currentApartment.unreadMessages.splice(index, 1)
+            store.messagesCounter -= 1
+        },
+        toggleMessageDetails(index) {
+            this.openMessageIndex = this.openMessageIndex === index ? null : index
+        },
+        isMessageOpen(index) {
+            return this.openMessageIndex === index
+        },
+        formatDate(dateString) {
+            const date = new Date(dateString)
+            const options = {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+            }
+            return date.toLocaleString("it-IT", options) // Formato d-m-Y H:i
         },
     },
     mounted() {
@@ -288,33 +309,35 @@ export default {
                         v-if="
                             store.myApartments.some((item) => item.id === store.currentApartment.id)
                         "
-                        class="bg-light p-4 rounded mt-4 col-12">
+                        class="bg-light p-4 rounded mt-4 col-6">
                         <div
                             v-if="
                                 store.currentApartment.unreadMessages &&
                                 store.currentApartment.unreadMessages.length > 0
                             "
                             class="mt-3">
-                            <h3 class="h5">Messaggi da leggere</h3>
+                            <h3 class="h5 text-orange">Messaggi da leggere</h3>
                             <ul class="list-unstyled">
                                 <li
                                     v-for="(message, index) in store.currentApartment
                                         .unreadMessages"
                                     :key="index"
                                     class="message-item">
-                                    <div>
-                                        <strong>Inviato da: </strong>
-                                        <a
-                                            @click="messageSeen(index)"
-                                            data-bs-toggle="collapse"
-                                            :href="'#messageDetails' + index"
-                                            role="button"
-                                            aria-expanded="false"
-                                            aria-controls="'messageDetails' + index">
-                                            {{ message.sender_email }}
-                                        </a>
+                                    <div class="message-header d-flex justify-content-between">
+                                        <div>
+                                            <strong>Inviato da: </strong>
+                                            <a
+                                                @click.prevent="toggleMessageDetails(index)"
+                                                href="#"
+                                                class="toggle-link">
+                                                {{ message.sender_email }}
+                                            </a>
+                                        </div>
+                                        <div class="date-message">
+                                            {{ formatDate(message.created_at) }}
+                                        </div>
                                     </div>
-                                    <div :id="'messageDetails' + index" class="collapse mt-2">
+                                    <div v-if="isMessageOpen(index)" class="message-details">
                                         <div>
                                             <strong>Nome e cognome:</strong>
                                             {{ message.sender_name }} {{ message.sender_surname }}
@@ -327,14 +350,19 @@ export default {
                                             <strong>Messaggio:</strong>
                                             {{ message.sender_message_text }}
                                         </div>
+                                        <div
+                                            class="text-orange mark-read"
+                                            @click="messageSeen(index)">
+                                            Segna come letto
+                                        </div>
                                     </div>
-
                                     <hr />
                                 </li>
                             </ul>
                         </div>
                         <div v-else>
-                            <h5>Non hai ricevuto nessun messaggio.</h5>
+                            <h5 class="text-orange">Non hai messaggi da leggere.</h5>
+                            <hr />
                         </div>
                         <div
                             v-if="
@@ -463,7 +491,7 @@ export default {
                             <button type="submit" class="btn btn-primary">Invia Messaggio</button>
                         </form>
                     </div>
-                    <div class="d-flex justify-content-between mt-2">
+                    <div class="d-flex justify-content-between mt-2 w-100">
                         <div>
                             <button @click="goBack" class="btn btn-secondary mb-3 me-2">
                                 <i class="fas fa-arrow-left me-2"></i>Indietro
@@ -563,5 +591,21 @@ main {
 
 .bg-light {
     background-color: #f8f9fa !important;
+}
+
+.mark-read {
+    cursor: pointer;
+    display: inline-block;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.date-message {
+    font-size: 12px;
+    display: inline-block;
+    text-align: end;
+    color: #7a7a7a;
 }
 </style>

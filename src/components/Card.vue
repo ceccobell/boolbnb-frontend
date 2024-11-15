@@ -1,9 +1,13 @@
 <template>
     <div class="content">
         <div class="card border-0">
-            <img v-if="apartment.images.length > 0 && apartment.images[0].url" :src="apartment.images[0].url"
-                class="card-img-top" alt="Property Image" />
-            <span v-if="apartment.unreadMessages && apartment.unreadMessages.length > 0"
+            <img
+                v-if="apartment.images.length > 0 && apartment.images[0].url"
+                :src="apartment.images[0].url"
+                class="card-img-top"
+                alt="Property Image" />
+            <span
+                v-if="apartment.unreadMessages && apartment.unreadMessages.length > 0"
                 class="position-absolute top-50 start-50 translate-middle badge rounded-pill bg-danger">
                 {{ apartment.unreadMessages.length }}
             </span>
@@ -12,18 +16,25 @@
                     {{ apartment.title }} <span class="city">{{ apartment.city }}</span>
                 </h2>
                 <p>{{ apartment.description }}</p>
-                <button class="button button-details px-2 py-1" @click="goToApartmentDetails(apartment)"
+                <button
+                    class="button button-details px-2 py-1"
+                    @click="goToApartmentDetails(apartment)"
                     :disabled="isNavigating">
                     Scopri
                     <span class="material-symbols-outlined"> &rarr; </span>
                 </button>
             </div>
-            <button v-if="showSponsorButton" type="button" class="position-absolute top-0 end-0 m-2"
-                @click="sponsor(apartment)" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                <span class="btn btn-warning" v-if="apartment.latest_package == null">
+            <button
+                v-if="showSponsorButton"
+                type="button"
+                class="position-absolute top-0 end-0 m-2"
+                @click="sponsor(apartment)"
+                data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop">
+                <span class="btn bg-orange text-white" v-if="apartment.latest_package == null">
                     <i class="fa-solid fa-crown"></i> Sponsor
                 </span>
-                <span class="btn btn-danger" v-if="apartment.latest_package">
+                <span class="btn bg-pink" v-if="apartment.latest_package">
                     <i class="fa-solid fa-business-time"></i>
                     {{ formattedSponsorshipEnd }}
                 </span>
@@ -36,8 +47,8 @@
 </template>
 
 <script>
-import axios from "axios";
-import { store } from "../store";
+import axios from "axios"
+import { store } from "../store"
 
 export default {
     props: {
@@ -48,36 +59,39 @@ export default {
         return {
             store,
             isNavigating: false, // Per prevenire click multipli
-        };
+        }
     },
     computed: {
         formattedSponsorshipEnd() {
-            return this.apartment.latest_package?.pivot?.sponsorship_end.split(" ")[0];
+            return this.apartment.latest_package?.pivot?.sponsorship_end.split(" ")[0]
         },
         apartmentViewCount() {
-            return this.store.viewCounts[this.apartment.id] || 0;
+            return this.store.viewCounts[this.apartment.id] || 0
         },
     },
     methods: {
         handleEditClick(apartment) {
-            this.store.apartmentToEdit = apartment;
-            this.$router.push("/edit-apartment");
+            this.store.apartmentToEdit = apartment
+            this.$router.push("/edit-apartment")
         },
         sponsor(apartment) {
-            this.store.apartmentToSponsor = apartment;
+            this.store.apartmentToSponsor = apartment
         },
         goToApartmentDetails(apartment) {
-            if (this.isNavigating) return;
-            this.isNavigating = true;
+            if (this.isNavigating) return
+            this.isNavigating = true
 
             this.registerView(apartment.id)
                 .then(() => {
-                    this.store.currentApartment = apartment;
-                    this.$router.push({ name: "ApartmentDetails", params: { slug: apartment.slug } });
+                    this.store.currentApartment = apartment
+                    this.$router.push({
+                        name: "ApartmentDetails",
+                        params: { slug: apartment.slug },
+                    })
                 })
                 .finally(() => {
-                    this.isNavigating = false;
-                });
+                    this.isNavigating = false
+                })
         },
         registerView(apartmentId) {
             return axios
@@ -87,32 +101,35 @@ export default {
                 .then(() => {
                     // Incrementa il conteggio nel tuo store
                     if (this.store.viewCounts[apartmentId]) {
-                        this.store.viewCounts[apartmentId]++;
+                        this.store.viewCounts[apartmentId]++
                     } else {
                         // Assicura la reattività aggiungendo la proprietà all'oggetto reattivo
-                        this.store.viewCounts = { ...this.store.viewCounts, [apartmentId]: 1 };
+                        this.store.viewCounts = { ...this.store.viewCounts, [apartmentId]: 1 }
                     }
                 })
                 .catch((error) => {
-                    console.error("Errore durante la registrazione della visualizzazione:", error);
-                });
+                    console.error("Errore durante la registrazione della visualizzazione:", error)
+                })
         },
         fetchViewCounter(apartmentId) {
             axios
                 .get(`http://127.0.0.1:8000/api/apartments/${apartmentId}/views`)
                 .then((response) => {
-                    const count = response.data.view_count;
-                    this.store.viewCounts = { ...this.store.viewCounts, [apartmentId]: count };
+                    const count = response.data.view_count
+                    this.store.viewCounts = { ...this.store.viewCounts, [apartmentId]: count }
                 })
                 .catch((error) => {
-                    console.error("Errore durante la richiesta del conteggio delle visualizzazioni:", error);
-                });
+                    console.error(
+                        "Errore durante la richiesta del conteggio delle visualizzazioni:",
+                        error
+                    )
+                })
         },
     },
     mounted() {
-        this.fetchViewCounter(this.apartment.id);
+        this.fetchViewCounter(this.apartment.id)
     },
-};
+}
 </script>
 
 <style scoped>
