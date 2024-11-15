@@ -58,7 +58,7 @@ export default {
     data() {
         return {
             store,
-            isNavigating: false, // Per prevenire click multipli
+            isNavigating: false,
         }
     },
     computed: {
@@ -98,7 +98,8 @@ export default {
                 .post(`http://127.0.0.1:8000/api/apartments/${apartmentId}/views`, {
                     apartment_id: apartmentId,
                 })
-                .then(() => {
+                .then((response) => {
+                    console.log(response.data)
                     // Incrementa il conteggio nel tuo store
                     if (this.store.viewCounts[apartmentId]) {
                         this.store.viewCounts[apartmentId]++

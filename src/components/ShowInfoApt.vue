@@ -3,8 +3,12 @@ import axios from "axios"
 import { store } from "../store"
 import tt from "@tomtom-international/web-sdk-maps"
 import "@tomtom-international/web-sdk-maps/dist/maps.css"
+import Chart from "./Chart.vue"
 
 export default {
+    components: {
+        Chart,
+    },
     data() {
         return {
             store,
@@ -27,6 +31,7 @@ export default {
             mapUrl: "",
             showModal: true,
             openMessageIndex: null,
+            dataViews: {},
         }
     },
     watch: {
@@ -173,8 +178,18 @@ export default {
             }
             return date.toLocaleString("it-IT", options) // Formato d-m-Y H:i
         },
+        getWeekViews(apartment) {
+            axios
+                .get(`http://127.0.0.1:8000/api/visualizzazioni/settimana`, {
+                    params: { apartment_id: store.currentApartment.id },
+                })
+                .then((response) => {
+                    this.dataViews = response.data
+                })
+        },
     },
     mounted() {
+        this.getWeekViews()
         if (this.store.currentApartment) {
             this.updateMapUrl(this.store.currentApartment.address)
         }
@@ -411,6 +426,13 @@ export default {
                                 </li>
                             </ul>
                         </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <Chart
+                            v-if="dataViews && Object.keys(dataViews).length > 0"
+                            :chartData="dataViews" />
+                        <p v-else>Caricamento dati...</p>
                     </div>
 
                     <div
