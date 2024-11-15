@@ -376,16 +376,21 @@ export default {
                                     v-for="(message, index) in store.currentApartment.readMessages"
                                     :key="index"
                                     class="message-item">
-                                    <div>
-                                        <strong>Inviato da: </strong>
-                                        <a
-                                            data-bs-toggle="collapse"
-                                            :href="'#messageDetails' + index"
-                                            role="button"
-                                            aria-expanded="false"
-                                            aria-controls="'messageDetails' + index">
-                                            {{ message.sender_email }}
-                                        </a>
+                                    <div class="message-header d-flex justify-content-between">
+                                        <div>
+                                            <strong>Inviato da: </strong>
+                                            <a
+                                                data-bs-toggle="collapse"
+                                                :href="'#messageDetails' + index"
+                                                role="button"
+                                                aria-expanded="false"
+                                                aria-controls="'messageDetails' + index">
+                                                {{ message.sender_email }}
+                                            </a>
+                                        </div>
+                                        <div class="date-message">
+                                            {{ formatDate(message.created_at) }}
+                                        </div>
                                     </div>
                                     <div :id="'messageDetails' + index" class="collapse mt-2">
                                         <div>
