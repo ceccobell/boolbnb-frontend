@@ -40,9 +40,6 @@
                 </span>
             </button>
         </div>
-        <div v-if="store.isAuthenticated" class="view-count mt-5">
-            <p>Visualizzazioni: {{ apartmentViewCount }}</p>
-        </div>
     </div>
 </template>
 

@@ -428,7 +428,11 @@ export default {
                         </div>
                     </div>
 
-                    <div class="col-12 col-md-6">
+                    <div
+                        v-if="
+                            store.myApartments.some((item) => item.id === store.currentApartment.id)
+                        "
+                        class="col-12 col-md-6">
                         <Chart
                             v-if="dataViews && Object.keys(dataViews).length > 0"
                             :chartData="dataViews" />
